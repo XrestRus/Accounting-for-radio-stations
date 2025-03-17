@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Учет радиостанций - Справка</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+        }
+        
+        /* Стили для бокового меню */
+        .sidebar {
+            width: 250px;
+            min-height: calc(100vh - 56px);
+            background-color: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+        }
+        
+        .sidebar .nav-link {
+            color: #495057;
+            padding: 0.8rem 1rem;
+            border-radius: 0;
+        }
+        
+        .sidebar .nav-link:hover {
+            background-color: #e9ecef;
+        }
+        
+        .sidebar .nav-link.active {
+            color: #fff;
+            background-color: #0d6efd;
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 0.5rem;
+        }
+        
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 1.5rem;
+        }
+        
+        .help-content h2 {
+            color: #0d6efd;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .help-content h3 {
+            color: #0d6efd;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .help-content p {
+            margin-bottom: 1rem;
+        }
+        
+        .help-content ul {
+            margin-bottom: 1rem;
+        }
+        
+        .help-content .card {
+            margin-bottom: 1rem;
+        }
+        
+        .help-content .card-header {
+            background-color: #e7f1ff;
+            color: #0d6efd;
+        }
+        
+        .help-image {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            margin: 1rem 0;
+        }
+        
+        .faq-item {
+            margin-bottom: 1rem;
+        }
+        
+        .faq-question {
+            font-weight: bold;
+            color: #0d6efd;
+            margin-bottom: 0.5rem;
+        }
+        
+        .faq-answer {
+            margin-left: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Верхняя навигационная панель -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">Учет радиостанций</a>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle"></i> Администратор
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#">Профиль</a></li>
+                        <li><a class="dropdown-item" href="#">Управление пользователями</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Выход</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="d-flex">
+        <!-- Боковое меню -->
+        <div class="sidebar">
+            <div class="d-flex flex-column p-3">
+                <ul class="nav nav-pills flex-column mb-auto">
+                    <li class="nav-item">
+                        <a href="index.html" class="nav-link">
+                            <i class="bi bi-speedometer2"></i> Главная
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="issue-device.html" class="nav-link">
+                            <i class="bi bi-box-arrow-right"></i> Выдача устройств
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="return-device.html" class="nav-link">
+                            <i class="bi bi-box-arrow-in-left"></i> Возврат устройств
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="devices.html" class="nav-link">
+                            <i class="bi bi-device-hdd"></i> Управление устройствами
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="journal.html" class="nav-link">
+                            <i class="bi bi-journal-text"></i> Журнал учета
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="employees.html" class="nav-link">
+                            <i class="bi bi-people"></i> Сотрудники
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="settings.html" class="nav-link">
+                            <i class="bi bi-gear"></i> Настройки
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="help.html" class="nav-link active">
+                            <i class="bi bi-question-circle"></i> Справка
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Основной контент -->
+        <div class="content-wrapper">
+            <div class="main-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Справка</h1>
+                    <div>
+                        <button type="button" class="btn btn-outline-primary">
+                            <i class="bi bi-printer"></i> Печать
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body help-content">
+                        <h2 id="introduction">Введение</h2>
+                        <p>Добро пожаловать в систему "Учет радиостанций"! Данная система предназначена для автоматизации процессов учета, выдачи и возврата радиостанций и других устройств в организации.</p>
+                        <p>Система позволяет вести учет устройств, контролировать их выдачу и возврат, отслеживать сроки возврата, а также формировать отчеты по использованию устройств.</p>
+                        <p>В этой справке вы найдете информацию о том, как пользоваться системой, описание основных функций и ответы на часто задаваемые вопросы.</p>
+
+                        <h2 id="getting-started">Начало работы</h2>
+                        <p>Для начала работы с системой необходимо авторизоваться, используя свои учетные данные (логин и пароль). После успешной авторизации вы попадете на главную страницу системы, где представлена общая информация о состоянии устройств и последних операциях.</p>
+                        <p>Навигация по системе осуществляется с помощью бокового меню, которое содержит следующие разделы:</p>
+                        <ul>
+                            <li><strong>Главная</strong> - общая информация и статистика</li>
+                            <li><strong>Выдача устройств</strong> - оформление выдачи устройств сотрудникам</li>
+                            <li><strong>Возврат устройств</strong> - оформление возврата устройств от сотрудников</li>
+                            <li><strong>Управление устройствами</strong> - добавление, редактирование и удаление устройств</li>
+                            <li><strong>Журнал учета</strong> - история операций выдачи и возврата устройств</li>
+                            <li><strong>Сотрудники</strong> - управление данными о сотрудниках</li>
+                            <li><strong>Настройки</strong> - настройки системы</li>
+                            <li><strong>Справка</strong> - документация по использованию системы</li>
+                        </ul>
+
+                        <h2 id="issue-device">Выдача устройств</h2>
+                        <p>Раздел "Выдача устройств" предназначен для оформления выдачи устройств сотрудникам. Процесс выдачи устройства состоит из следующих шагов:</p>
+                        <ol>
+                            <li>Выберите сотрудника из списка</li>
+                            <li>Укажите срок возврата устройства (дату и время)</li>
+                            <li>Выберите устройство одним из способов:
+                                <ul>
+                                    <li>Сканирование QR/штрих-кода устройства</li>
+                                    <li>Ввод серийного номера устройства вручную</li>
+                                    <li>Выбор устройства из списка доступных устройств</li>
+                                </ul>
+                            </li>
+                            <li>Проверьте информацию о выбранном устройстве</li>
+                            <li>Нажмите кнопку "Выдать устройство" для завершения операции</li>
+                        </ol>
+                        <p>После успешного оформления выдачи устройства, информация об операции будет сохранена в журнале учета, а статус устройства изменится на "Выдано".</p>
+
+                        <h2 id="return-device">Возврат устройств</h2>
+                        <p>Раздел "Возврат устройств" предназначен для оформления возврата устройств от сотрудников. Процесс возврата устройства состоит из следующих шагов:</p>
+                        <ol>
+                            <li>Выберите устройство для возврата одним из способов:
+                                <ul>
+                                    <li>Сканирование QR/штрих-кода устройства</li>
+                                    <li>Ввод серийного номера устройства вручную</li>
+                                    <li>Выбор устройства из списка выданных устройств</li>
+                                </ul>
+                            </li>
+                            <li>Проверьте информацию о выбранном устройстве и сотруднике</li>
+                            <li>Укажите состояние устройства (исправно или неисправно)</li>
+                            <li>Если устройство неисправно, укажите причину неисправности</li>
+                            <li>При необходимости добавьте комментарий</li>
+                            <li>Нажмите кнопку "Принять устройство" для завершения операции</li>
+                        </ol>
+                        <p>После успешного оформления возврата устройства, информация об операции будет сохранена в журнале учета, а статус устройства изменится на "Доступно" или "Неисправно" в зависимости от указанного состояния.</p>
+
+                        <h2 id="devices-management">Управление устройствами</h2>
+                        <p>Раздел "Управление устройствами" предназначен для добавления, редактирования и удаления устройств в системе. В этом разделе вы можете:</p>
+                        <ul>
+                            <li>Просматривать список всех устройств</li>
+                            <li>Фильтровать устройства по типу, статусу и другим параметрам</li>
+                            <li>Добавлять новые устройства</li>
+                            <li>Редактировать информацию о существующих устройствах</li>
+                            <li>Удалять устройства из системы</li>
+                            <li>Просматривать подробную информацию об устройстве</li>
+                        </ul>
+                        <p>Для добавления нового устройства нажмите кнопку "Добавить устройство" и заполните форму с информацией об устройстве. Обязательными полями являются название устройства, тип устройства и серийный номер.</p>
+                        <p>Для редактирования информации об устройстве нажмите кнопку "Редактировать" напротив соответствующего устройства в списке.</p>
+                        <p>Для удаления устройства нажмите кнопку "Удалить" напротив соответствующего устройства в списке и подтвердите операцию.</p>
+
+                        <h2 id="journal">Журнал учета</h2>
+                        <p>Раздел "Журнал учета" предназначен для просмотра истории операций выдачи и возврата устройств. В этом разделе вы можете:</p>
+                        <ul>
+                            <li>Просматривать список всех операций</li>
+                            <li>Фильтровать операции по дате, типу операции, устройству, сотруднику и другим параметрам</li>
+                            <li>Просматривать
+

@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Учет радиостанций - Журнал учета</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        .action-buttons {
+            white-space: nowrap;
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+        }
+        
+        /* Стили для бокового меню */
+        .sidebar {
+            width: 250px;
+            min-height: calc(100vh - 56px);
+            background-color: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+        }
+        
+        .sidebar .nav-link {
+            color: #495057;
+            padding: 0.8rem 1rem;
+            border-radius: 0;
+        }
+        
+        .sidebar .nav-link:hover {
+            background-color: #e9ecef;
+        }
+        
+        .sidebar .nav-link.active {
+            color: #fff;
+            background-color: #0d6efd;
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 0.5rem;
+        }
+        
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 1.5rem;
+        }
+        
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 0.35em 0.65em;
+        }
+        
+        .filter-card {
+            margin-bottom: 1.5rem;
+        }
+        
+        .journal-table th, .journal-table td {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <!-- Верхняя навигационная панель -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Учет радиостанций</a>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle"></i> Администратор
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#">Профиль</a></li>
+                        <li><a class="dropdown-item" href="#">Управление пользователями</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Выход</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="d-flex">
+        <!-- Боковое меню -->
+        <div class="sidebar">
+            <div class="d-flex flex-column p-3">
+                <ul class="nav nav-pills flex-column mb-auto">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-speedometer2"></i> Главная
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="issue-device.html" class="nav-link">
+                            <i class="bi bi-box-arrow-right"></i> Выдача устройств
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="return-device.html" class="nav-link">
+                            <i class="bi bi-box-arrow-in-left"></i> Возврат устройств
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="devices.html" class="nav-link">
+                            <i class="bi bi-device-hdd"></i> Управление устройствами
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="journal.html" class="nav-link active">
+                            <i class="bi bi-journal-text"></i> Журнал учета
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-file-earmark-text"></i> Отчеты
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="employees.html" class="nav-link">
+                            <i class="bi bi-people"></i> Сотрудники
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-gear"></i> Настройки
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Основной контент -->
+        <div class="content-wrapper">
+            <div class="main-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Журнал учета</h1>
+                    <div>
+                        <button type="button" class="btn btn-outline-secondary me-2">
+                            <i class="bi bi-printer"></i> Печать
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary">
+                            <i class="bi bi-download"></i> Экспорт
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Фильтры -->
+                <div class="card filter-card">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Фильтры</h5>
+                        <form>
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <label for="dateFrom" class="form-label">Дата с</label>
+                                    <input type="date" class="form-control" id="dateFrom">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="dateTo" class="form-label">Дата по</label>
+                                    <input type="date" class="form-control" id="dateTo">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="deviceType" class="form-label">Тип устройства</label>
+                                    <select class="form-select" id="deviceType">
+                                        <option value="">Все типы</option>
+                                        <option value="radio">Радиостанция</option>
+                                        <option value="safety">Устройство безопасности</option>
+                                        <option value="storage">Носитель информации</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="operationType" class="form-label">Тип операции</label>
+                                    <select class="form-select" id="operationType">
+                                        <option value="">Все операции</option>
+                                        <option value="issue">Выдача</option>
+                                        <option value="return">Возврат</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="employeeFilter" class="form-label">Сотрудник</label>
+                                    <select class="form-select" id="employeeFilter">
+                                        <option value="">Все сотрудники</option>
+                                        <option value="1">Иванов Иван Иванович</option>
+                                        <option value="2">Петров Петр Петрович</option>
+                                        <option value="3">Сидоров Сергей Сергеевич</option>
+                                        <option value="4">Козлова Анна Александровна</option>
+                                        <option value="5">Новиков Владимир Михайлович</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="deviceFilter" class="form-label">Устройство</label>
+                                    <input type="text" class="form-control" id="deviceFilter" placeholder="Название или серийный номер">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="statusFilter" class="form-label">Статус</label>
+                                    <select class="form-select" id="statusFilter">
+                                        <option value="">Все статусы</option>
+                                        <option value="issued">Выдано</option>
+                                        <option value="returned">Возвращено</option>
+                                        <option value="overdue">Просрочено</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 d-flex justify-content-end">
+                                    <button type="reset" class="btn btn-outline-secondary me-2">Сбросить</button>
+                                    <button type="submit" class="btn btn-primary">Применить</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Таблица журнала -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover journal-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Дата/время</th>
+                                        <th scope="col">Тип операции</th>
+                                        <th scope="col">Устройство</th>
+                                        <th scope="col">Серийный номер</th>
+                                        <th scope="col">Сотрудник</th>
+                                        <th scope="col">Пользователь</th>
+                                        <th scope="col">Срок возврата</th>
+                                        <th scope="col">Статус</th>
+                                        <th scope="col">Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1001</td>
+                                        <td>01.10.2023 12:00</td>
+                                        <td><span class="badge bg-primary">Выдача</span></td>
+                                        <td>Радиостанция АК-9</td>
+                                        <td>SN123456</td>
+                                        <td>Иванов И.И.</td>
+                                        <td>Администратор</td>
+                                        <td>05.10.2023 12:00</td>
+                                        <td><span class="badge bg-warning text-dark">Выдано</span></td>
+                                        <td class="action-buttons">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#detailsModal" title="Подробнее">
+                                                <i class="bi bi-info-circle"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-primary" title="Печать акта">
+                                                <i class="bi bi-printer"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>1002</td>
+                                        <td>02.10.2023 09:30</td>
+                                        <td><span class="badge bg-primary">Выдача</span></td>
+                                        <td>ТСКБМ-Н</td>
+                                        <td>SN789012</td>
+                                        <td>Петров П.П.</td>
+                                        <td>Администратор</td>
+                                        <td>06.10.2023 09:30</td>
+                                        <td><span class="badge bg-warning text-dark">Выдано</span></td>
+                                        <td class="action-buttons">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#detailsModal" title="Подробнее">
+                                                <i class="bi bi-info-circle"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-primary" title="Печать акта">
+                                                <i class="bi bi-printer"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>1003</td>
+                                        <td>03.10.2023 14:15</td>
+                                        <td><span class="badge bg-primary">Выдача</span></td>
+                                        <td>Носитель КР</td>
+                                        <td>SN567890</td>
+                                        <td>Сидоров С.С.</td>
+                                        <td>Администратор</td>
+                                        <td>04.10.2023 14:15</td>
+                                        <td><span class="badge bg-danger">Просрочено</span></td>
+                                        <td class="action-buttons">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#detailsModal" title="Подробнее">
+                                                <i class="bi bi-info-circle"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-primary" title="Печать акта">
+                                                <i class="bi bi-printer"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>1004</td>
+                                        <td>03.10.2023 16:45</td>
+                                        <td><span class="badge bg-success">Возврат</span></td>
+                                        <td>Радиостанция РВ-1.1М</td>
+                                        <td>SN345678</td>
+                                        <td>Козлова А.А.</td>
+                                        <td>Администратор</td>
+                                        <td>03.10.2023 17:00</td>
+                                        <td><span class="badge bg-success">Возвращено</span></td>
+                                        <td class="action-buttons">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#detailsModal" title="Подробнее">
+                                                <i class="bi bi-info-circle"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-primary" title="Печать акта">
+                                                <i class="bi bi-printer"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>1005</td>
+                                        <td>04.10.2023 08:20</td>
+                                        <td><span class="badge bg-primary">Выдача</span></td>
+                                        <td>МПМЭ-128</td>
+                                        <td>SN901234</td>
+                                        <td>Новиков В.М.</td>
+                                        <td>Администратор</td>
+                                        <td>11.10.2023 08:20</td>
+                                        <td><span class="badge bg-warning text-dark">Выдано</span></td>
+                                        <td class="action-buttons">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#detailsModal" title="Подробнее">
+                                                <i class="bi bi-info-circle"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-primary" title="Печать акта">
+                                                <i class="bi bi-printer"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>1006</td>
+                                        <td>04.10.2023 10:30</td>
+                                        <td><span class="badge bg-success">Возврат</span></td>
+                                        <td>Радиостанция АК-9</td>
+                                        <td>SN123456</td>
+                                        <td>Иванов И.И.</td>
+                                        <td>Администратор</td>
+                                        <td>05.10.2023 12:00</td>
+                                        <td><span class="badge bg-success">Возвращено</span></td>
+                                        <td class="action-buttons">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#detailsModal" title="Подробнее">
+                                                <i class="bi bi-info-circle"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-primary" title="Печать акта">
+                                                <i class="bi bi-printer"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Пагинация -->
+                        <nav aria-label="Навигация по страницам">
+                            <ul class="pagination justify-content-center mt-4">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Предыдущая</a>
+                                </li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">Следующая</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для просмотра подробной информации -->
+    <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailsModalLabel">Подробная информация об операции</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Информация об операции</h6>
+                            <p><strong>ID операции:</strong> 1001</p>
+                            <p><strong>Тип операции:</strong> Выдача</p>
+                            <p><strong>Дата/время:</strong> 01.10.2023 12:00</p>
+                            <p><strong>Срок возврата:</strong> 05.10.2023 12:00</p>
+                            <p><strong>Статус:</strong> <span class="badge bg-warning text-dark">Выдано</span></p>
+                            <p><strong>Пользователь:</strong> Администратор</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Информация об устройстве</h6>
+                            <p><strong>Название:</strong> Радиостанция АК-9</p>
+                            <p><strong>Тип:</strong> Радиостанция</p>
+                            <p><strong>Серийный номер:</strong> SN123456</p>
+                            <p><strong>Инвентарный номер:</strong> INV-2023-001</p>
+                            <p><strong>QR/Штрих-код:</strong> QR123</p>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <h6>Информация о сотруднике</h6>
+                            <p><strong>ФИО:</strong> Иванов Иван Иванович</p>
+                            <p><strong>Должность:</strong> Машинист</p>
+                            <p><strong>Подразделение:</strong> Локомотивное депо</p>
+                            <p><strong>Телефон:</strong> +7 999 123 45 67</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Комментарии</h6>
+                            <p>Устройство выдано в исправном состоянии.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary">
+                        <i class="bi bi-printer"></i> Печать акта
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS (без JavaScript функциональности) -->
+</body>
+</html>
+

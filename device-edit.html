@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Учет радиостанций - Добавление/редактирование устройства</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+        }
+        
+        /* Стили для бокового меню */
+        .sidebar {
+            width: 250px;
+            min-height: calc(100vh - 56px);
+            background-color: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+        }
+        
+        .sidebar .nav-link {
+            color: #495057;
+            padding: 0.8rem 1rem;
+            border-radius: 0;
+        }
+        
+        .sidebar .nav-link:hover {
+            background-color: #e9ecef;
+        }
+        
+        .sidebar .nav-link.active {
+            color: #fff;
+            background-color: #0d6efd;
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 0.5rem;
+        }
+        
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 1.5rem;
+        }
+        
+        .required-field::after {
+            content: " *";
+            color: red;
+        }
+        
+        /* Стили для загрузки изображения */
+        .image-upload-container {
+            border: 2px dashed #dee2e6;
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .image-upload-container:hover {
+            border-color: #0d6efd;
+            background-color: #e9ecef;
+        }
+        
+        .image-upload-icon {
+            font-size: 48px;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+        
+        .image-preview {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Верхняя навигационная панель -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Учет радиостанций</a>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle"></i> Администратор
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#">Профиль</a></li>
+                        <li><a class="dropdown-item" href="#">Управление пользователями</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Выход</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="d-flex">
+        <!-- Боковое меню -->
+        <div class="sidebar">
+            <div class="d-flex flex-column p-3">
+                <ul class="nav nav-pills flex-column mb-auto">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-speedometer2"></i> Главная
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-box-arrow-right"></i> Выдача устройств
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-box-arrow-in-left"></i> Возврат устройств
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="devices.html" class="nav-link active">
+                            <i class="bi bi-device-hdd"></i> Управление устройствами
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-journal-text"></i> Журнал учета
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-file-earmark-text"></i> Отчеты
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-people"></i> Сотрудники
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-gear"></i> Настройки
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Основной контент -->
+        <div class="content-wrapper">
+            <div class="main-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Добавление устройства</h1>
+                    <a href="devices.html" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Вернуться к списку
+                    </a>
+                </div>
+
+                <!-- Форма добавления/редактирования устройства -->
+                <div class="card">
+                    <div class="card-body">
+                        <form>
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <h4>Основная информация</h4>
+                                    <div class="mb-3">
+                                        <label for="deviceName" class="form-label required-field">Название устройства</label>
+                                        <input type="text" class="form-control" id="deviceName" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="deviceType" class="form-label required-field">Тип устройства</label>
+                                        <select class="form-select" id="deviceType" required>
+                                            <option value="">Выберите тип</option>
+                                            <option value="radio">Радиостанция</option>
+                                            <option value="carrier">Носитель информации</option>
+                                            <option value="security">Устройство безопасности</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="serialNumber" class="form-label required-field">Серийный номер</label>
+                                        <input type="text" class="form-control" id="serialNumber" required>
+                                        <div class="form-text">Уникальный серийный номер устройства</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="qrCode" class="form-label">QR/Штрих-код</label>
+                                        <input type="text" class="form-control" id="qrCode">
+                                        <div class="form-text">Код для быстрого сканирования (если имеется)</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h4>Изображение устройства</h4>
+                                    <div class="mb-3">
+                                        <label for="deviceImage" class="form-label">Фотография устройства</label>
+                                        <div class="image-upload-container" onclick="document.getElementById('deviceImage').click()">
+                                            <input type="file" id="deviceImage" accept="image/*" style="display: none;">
+                                            <div class="image-upload-icon">
+                                                <i class="bi bi-camera"></i>
+                                            </div>
+                                            <p class="mb-1">Нажмите для загрузки изображения</p>
+                                            <p class="text-muted small">Поддерживаемые форматы: JPG, PNG, GIF</p>
+                                            <img id="imagePreview" class="image-preview" src="#" alt="Предпросмотр">
+                                        </div>
+                                        <div class="form-text mt-2">Загрузите фотографию устройства для облегчения идентификации</div>
+                                    </div>
+                                    
+                                    <h4 class="mt-4">Дополнительная информация</h4>
+                                    <div class="mb-3">
+                                        <label for="deviceDescription" class="form-label">Описание</label>
+                                        <textarea class="form-control" id="deviceDescription" rows="3"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <h4>Примечания</h4>
+                                    <div class="mb-3">
+                                        <label for="deviceNotes" class="form-label">Дополнительные сведения</label>
+                                        <textarea class="form-control" id="deviceNotes" rows="2"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="alert alert-info">
+                                        <i class="bi bi-info-circle"></i> Поля, отмеченные <span class="text-danger">*</span>, обязательны для заполнения.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <a href="devices.html" class="btn btn-secondary">Отмена</a>
+                                <div>
+                                    <button type="reset" class="btn btn-outline-secondary me-2">Сбросить</button>
+                                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS (без JavaScript функциональности) -->
+</body>
+</html>
+

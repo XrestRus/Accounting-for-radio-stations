@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Учет радиостанций - Настройки</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+        }
+        
+        /* Стили для бокового меню */
+        .sidebar {
+            width: 250px;
+            min-height: calc(100vh - 56px);
+            background-color: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+        }
+        
+        .sidebar .nav-link {
+            color: #495057;
+            padding: 0.8rem 1rem;
+            border-radius: 0;
+        }
+        
+        .sidebar .nav-link:hover {
+            background-color: #e9ecef;
+        }
+        
+        .sidebar .nav-link.active {
+            color: #fff;
+            background-color: #0d6efd;
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 0.5rem;
+        }
+        
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 1.5rem;
+        }
+        
+        .settings-nav .nav-link {
+            color: #495057;
+            border-radius: 0;
+            padding: 0.8rem 1rem;
+        }
+        
+        .settings-nav .nav-link:hover {
+            background-color: #e9ecef;
+        }
+        
+        .settings-nav .nav-link.active {
+            color: #0d6efd;
+            background-color: #e7f1ff;
+            border-left: 3px solid #0d6efd;
+        }
+        
+        .settings-nav .nav-link i {
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Верхняя навигационная панель -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">Учет радиостанций</a>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle"></i> Администратор
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#">Профиль</a></li>
+                        <li><a class="dropdown-item" href="#">Управление пользователями</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Выход</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="d-flex">
+        <!-- Боковое меню -->
+        <div class="sidebar">
+            <div class="d-flex flex-column p-3">
+                <ul class="nav nav-pills flex-column mb-auto">
+                    <li class="nav-item">
+                        <a href="index.html" class="nav-link">
+                            <i class="bi bi-speedometer2"></i> Главная
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="issue-device.html" class="nav-link">
+                            <i class="bi bi-box-arrow-right"></i> Выдача устройств
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="return-device.html" class="nav-link">
+                            <i class="bi bi-box-arrow-in-left"></i> Возврат устройств
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="devices.html" class="nav-link">
+                            <i class="bi bi-device-hdd"></i> Управление устройствами
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="journal.html" class="nav-link">
+                            <i class="bi bi-journal-text"></i> Журнал учета
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="employees.html" class="nav-link">
+                            <i class="bi bi-people"></i> Сотрудники
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="settings.html" class="nav-link active">
+                            <i class="bi bi-gear"></i> Настройки
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="help.html" class="nav-link">
+                            <i class="bi bi-question-circle"></i> Справка
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Основной контент -->
+        <div class="content-wrapper">
+            <div class="main-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Настройки</h1>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card mb-4">
+                            <div class="card-body p-0">
+                                <div class="list-group settings-nav">
+                                    <a href="#general" class="list-group-item list-group-item-action active" data-bs-toggle="list">
+                                        <i class="bi bi-sliders"></i> Общие настройки
+                                    </a>
+                                    <a href="#users" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                                        <i class="bi bi-people"></i> Пользователи
+                                    </a>
+                                    <a href="#devices" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                                        <i class="bi bi-device-hdd"></i> Типы устройств
+                                    </a>
+                                    <a href="#departments" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                                        <i class="bi bi-building"></i> Подразделения
+                                    </a>
+                                    <a href="#positions" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                                        <i class="bi bi-person-badge"></i> Должности
+                                    </a>
+                                    <a href="#notifications" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                                        <i class="bi bi-bell"></i> Уведомления
+                                    </a>
+                                    <a href="#backup" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                                        <i class="bi bi-cloud-arrow-up"></i> Резервное копирование
+                                    </a>
+                                    <a href="#logs" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                                        <i class="bi bi-file-text"></i> Журналы системы
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="tab-content">
+                            <!-- Общие настройки -->
+                            <div class="tab-pane fade show active" id="general">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Общие настройки</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <form>
+                                            <div class="mb-3">
+                                                <label for="companyName" class="form-label">Название организации</label>
+                                                <input type="text" class="form-control" id="companyName" value="ОАО РЖД">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="departmentName" class="form-label">Название подразделения</label>
+                                                <input type="text" class="form-control" id="departmentName" value="Локомотивное депо">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="defaultReturnPeriod" class="form-label">Срок возврата по умолчанию (дней)</label>
+                                                <input type="number" class="form-control" id="defaultReturnPeriod" value="7">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="language" class="form-label">Язык интерфейса</label>
+                                                <select class="form-select" id="language">
+                                                    <option value="ru" selected>Русский</option>
+                                                    <option value="en">English</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="dateFormat" class="form-label">Формат даты</label>
+                                                <select class="form-select" id="dateFormat">
+                                                    <option value="dd.mm.yyyy" selected>ДД.ММ.ГГГГ</option>
+                                                    <option value="mm.dd.yyyy">ММ.ДД.ГГГГ</option>
+                                                    <option value="yyyy-mm-dd">ГГГГ-ММ-ДД</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="timeFormat" class="form-label">Формат времени</label>
+                                                <select class="form-select" id="timeFormat">
+                                                    <option value="24h" selected>24-часовой (14:30)</option>
+                                                    <option value="12h">12-часовой (2:30 PM)</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3 form-check">
+                                                <input type="checkbox" class="form-check-input" id="enableNotifications" checked>
+                                                <label class="form-check-label" for="enableNotifications">Включить уведомления</label>
+                                            </div>
+                                            <div class="mb-3 form-check">
+                                                <input type="checkbox" class="form-check-input" id="enableEmailNotifications">
+                                                <label class="form-check-label" for="enableEmailNotifications">Отправлять уведомления по электронной почте</label>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Пользователи -->
+                            <div class="tab-pane fade" id="users">
+                                <div class="card">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <h5 class="mb-0">Пользователи системы</h5>
+                                        <button type="button" class="btn btn-primary btn-sm">
+                                            <i class="bi bi-plus"></i> Добавить пользователя
+                                        </button>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Имя пользователя</th>
+                                                        <th>Роль</th>
+                                                        <th>Email</th>
+                                                        <th>Статус</th>
+                                                        <th>Последний вход</th>
+                                                        <th>Действия</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>admin</td>
+                                                        <td>Администратор</td>
+                                                        <td>admin@example.com</td>
+                                                        <td><span class="badge bg-success">Активен</span></td>
+                                                        <td>05.10.2023 10:15</td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-sm btn-outline-primary">
+                                                                <i class="bi bi-pencil"></i>
+                                                            </button>
+                                                            <button type="button" class="btn btn-sm btn-outline-danger">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>operator</td>
+                                                        <td>Оператор</td>
+                                                        <td>operator@example.com</td>
+                                                        <td><span class="badge bg-success">Активен</span></td>
+                                                        <td>05.10.2023 09:30</td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-sm btn-outline-primary">
+                                                                <i class="bi bi-pencil"></i>
+                                                            </button>
+                                                            <button type="button" class="btn btn-sm btn-outline-danger">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>manager</td>
+                                                        <td>Менеджер</td>
+                                                        <td>manager@example.com</td>
+                                                        <td><span class="badge bg-success">Активен</span></td>
+                                                        <td>04.10.2023 16:45</td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-sm btn-outline-primary">
+                                                                <i class="bi bi-pencil"></i>
+                                                            </button>
+                                                            <button type="button" class="btn btn-sm btn-outline-danger">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>viewer</td>
+                                                        <td>Наблюдатель</td>
+                                                        <td>viewer@example.com</td>
+                                                        <td><span class="badge bg-secondary">Неактивен</span></td>
+                                                        <td>01.10.2023 11:20</td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-sm btn-outline-primary">
+                                                                <i class="bi bi-pencil"></i>
+                                                            </button>
+                                                            <button type="button" class="btn btn-sm btn-outline-danger">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Другие вкладки настроек -->
+                            <div class="tab-pane fade" id="devices">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Типы устройств</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p>Здесь будут настройки типов устройств.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="departments">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Подразделения</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p>Здесь будут настройки подразделений.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="positions">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Должности</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p>Здесь будут настройки должностей.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="notifications">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Уведомления</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p>Здесь будут настройки уведомлений.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="backup">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Резервное копирование</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p>Здесь будут настройки резервного копирования.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="logs">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Журналы системы</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p>Здесь будут журналы системы.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS (без JavaScript функциональности) -->
+</body>
+</html>
+

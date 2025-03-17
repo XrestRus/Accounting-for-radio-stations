@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Учет радиостанций - Добавление/редактирование пользователя</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+        }
+        
+        /* Стили для бокового меню */
+        .sidebar {
+            width: 250px;
+            min-height: calc(100vh - 56px);
+            background-color: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+        }
+        
+        .sidebar .nav-link {
+            color: #495057;
+            padding: 0.8rem 1rem;
+            border-radius: 0;
+        }
+        
+        .sidebar .nav-link:hover {
+            background-color: #e9ecef;
+        }
+        
+        .sidebar .nav-link.active {
+            color: #fff;
+            background-color: #0d6efd;
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 0.5rem;
+        }
+        
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 1.5rem;
+        }
+        
+        .required-field::after {
+            content: " *";
+            color: red;
+        }
+        
+        .password-toggle {
+            cursor: pointer;
+        }
+        
+        .user-avatar-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 15px;
+        }
+        
+        .avatar-upload-container {
+            border: 2px dashed #dee2e6;
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .avatar-upload-container:hover {
+            border-color: #0d6efd;
+            background-color: #e9ecef;
+        }
+        
+        .avatar-upload-icon {
+            font-size: 48px;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Верхняя навигационная панель -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">Учет радиостанций</a>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle"></i> Администратор
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#">Профиль</a></li>
+                        <li><a class="dropdown-item" href="users.html">Управление пользователями</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="login.html">Выход</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="d-flex">
+        <!-- Боковое меню -->
+        <div class="sidebar">
+            <div class="d-flex flex-column p-3">
+                <ul class="nav nav-pills flex-column mb-auto">
+                    <li class="nav-item">
+                        <a href="index.html" class="nav-link">
+                            <i class="bi bi-speedometer2"></i> Главная
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="issue-device.html" class="nav-link">
+                            <i class="bi bi-box-arrow-right"></i> Выдача устройств
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="return-device.html" class="nav-link">
+                            <i class="bi bi-box-arrow-in-left"></i> Возврат устройств
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="devices.html" class="nav-link">
+                            <i class="bi bi-device-hdd"></i> Управление устройствами
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="journal.html" class="nav-link">
+                            <i class="bi bi-journal-text"></i> Журнал учета
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="employees.html" class="nav-link">
+                            <i class="bi bi-people"></i> Сотрудники
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="settings.html" class="nav-link">
+                            <i class="bi bi-gear"></i> Настройки
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="help.html" class="nav-link">
+                            <i class="bi bi-question-circle"></i> Справка
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Основной контент -->
+        <div class="content-wrapper">
+            <div class="main-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Добавление пользователя</h1>
+                    <a href="users.html" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Вернуться к списку
+                    </a>
+                </div>
+
+                <!-- Форма добавления/редактирования пользователя -->
+                <div class="card">
+                    <div class="card-body">
+                        <form>
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <h4>Основная информация</h4>
+                                    <div class="mb-3">
+                                        <label for="fullName" class="form-label required-field">ФИО</label>
+                                        <input type="text" class="form-control" id="fullName" placeholder="Фамилия Имя Отчество" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="username" class="form-label required-field">Имя пользователя</label>
+                                        <input type="text" class="form-control" id="username" placeholder="Логин для входа в систему" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label required-field">Email</label>
+                                        <input type="email" class="form-control" id="email" placeholder="example@domain.com" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="phone" class="form-label">Телефон</label>
+                                        <input type="tel" class="form-control" id="phone" placeholder="+7 (___) ___-__-__">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h4>Настройки аккаунта</h4>
+                                    <div class="mb-3">
+                                        <label for="role" class="form-label required-field">Роль</label>
+                                        <select class="form-select" id="role" required>
+                                            <option value="">Выберите роль</option>
+                                            <option value="admin">Администратор</option>
+                                            <option value="manager">Менеджер</option>
+                                            <option value="user">Пользователь</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label required-field">Пароль</label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" id="password" required>
+                                            <span class="input-group-text password-toggle" onclick="togglePasswordVisibility('password')">
+                                                <i class="bi bi-eye"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="confirmPassword" class="form-label required-field">Подтверждение пароля</label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" id="confirmPassword" required>
+                                            <span class="input-group-text password-toggle" onclick="togglePasswordVisibility('confirmPassword')">
+                                                <i class="bi bi-eye"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label d-block">Статус</label>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="status" id="statusActive" value="active" checked>
+                                            <label class="form-check-label" for="statusActive">Активен</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="status" id="statusInactive" value="inactive">
+                                            <label class="form-check-label" for="statusInactive">Неактивен</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <h4>Дополнительная информация</h4>
+                                    <div class="mb-3">
+                                        <label for="position" class="form-label">Должность</label>
+                                        <input type="text" class="form-control" id="position">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="department" class="form-label">Подразделение</label>
+                                        <select class="form-select" id="department">
+                                            <option value="">Выберите подразделение</option>
+                                            <option value="locomotive">Локомотивное депо</option>
+                                            <option value="repair">Ремонтный цех</option>
+                                            <option value="admin">Администрация</option>
+                                            <option value="security">Служба безопасности</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h4>Аватар пользователя</h4>
+                                    <div class="text-center mb-3">
+                                        <div class="user-avatar-preview mx-auto">ИИ</div>
+                                    </div>
+                                    <div class="avatar-upload-container" onclick="document.getElementById('avatarUpload').click()">
+                                        <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+                                        <div class="avatar-upload-icon">
+                                            <i class="bi bi-camera"></i>
+                                        </div>
+                                        <p class="mb-1">Нажмите для загрузки изображения</p>
+                                        <p class="text-muted small">Поддерживаемые форматы: JPG, PNG</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="alert alert-info">
+                                        <i class="bi bi-info-circle"></i> Поля, отмеченные <span class="text-danger">*</span>, обязательны для заполнения.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <a href="users.html" class="btn btn-secondary">Отмена</a>
+                                <div>
+                                    <button type="reset" class="btn btn-outline-secondary me-2">Сбросить</button>
+                                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Скрипт для переключения видимости пароля -->
+    <script>
+        function togglePasswordVisibility(inputId) {
+            const passwordInput = document.getElementById(inputId);
+            const icon = passwordInput.nextElementSibling.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        }
+    </script>
+</body>
+</html>
+
