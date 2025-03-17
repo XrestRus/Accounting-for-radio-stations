@@ -157,7 +157,7 @@
                                             <a href="device-edit.html?id=1" class="btn btn-sm btn-primary">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
-                                            <button type="button" class="btn btn-sm btn-danger">
+                                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-device-name="Радиостанция АК-9" data-device-id="1">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </td>
@@ -177,7 +177,7 @@
                                             <a href="device-edit.html?id=2" class="btn btn-sm btn-primary">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
-                                            <button type="button" class="btn btn-sm btn-danger">
+                                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-device-name="Носитель КР-М" data-device-id="2">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </td>
@@ -197,7 +197,7 @@
                                             <a href="device-edit.html?id=3" class="btn btn-sm btn-primary">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
-                                            <button type="button" class="btn btn-sm btn-danger">
+                                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-device-name="ТСКБМ-Н" data-device-id="3">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </td>
@@ -283,19 +283,17 @@
                             <p><strong>Серийный номер:</strong> SN123456</p>
                             <p><strong>QR/Штрих-код:</strong> QR123</p>
                             <p><strong>Статус:</strong> <span class="badge bg-success">Доступно</span></p>
-                            <p><strong>Дата создания:</strong> 01.10.2023</p>
                         </div>
                         <div class="col-md-6">
                             <h6>Дополнительная информация</h6>
-                            <p><strong>Описание:</strong> Портативная радиостанция для связи машинистов</p>
-                            <p><strong>Инвентарный номер:</strong> INV-2023-001</p>
-                            <p><strong>Местоположение:</strong> Склад №2</p>
-                            <p><strong>Последняя проверка:</strong> 28.09.2023</p>
+                            <p><strong>Дата создания:</strong> 01.10.2023</p>
+                            <p><strong>Последнее обновление:</strong> 04.10.2023</p>
+                            <p><strong>Описание:</strong> Портативная радиостанция для связи в локомотивных бригадах</p>
                         </div>
                     </div>
                     <div class="row mt-3">
                         <div class="col-12">
-                            <h6>История использования</h6>
+                            <h6>История операций</h6>
                             <div class="table-responsive">
                                 <table class="table table-sm table-bordered">
                                     <thead>
@@ -355,7 +353,36 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS (без JavaScript функциональности) -->
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- JavaScript для модальных окон -->
+    <script>
+        // Обработчик события открытия модального окна удаления
+        document.addEventListener('DOMContentLoaded', function() {
+            // Получаем модальное окно
+            var deleteModal = document.getElementById('deleteModal');
+            
+            // Обработчик открытия модального окна удаления устройства
+            // Подставляет название устройства в текст и сохраняет его ID для удаления
+            deleteModal.addEventListener('show.bs.modal', function(event) {
+                // Получаем кнопку, которая вызвала модальное окно
+                var button = event.relatedTarget;
+                
+                // Извлекаем информацию об устройстве из атрибутов data-*
+                var deviceName = button.getAttribute('data-device-name');
+                var deviceId = button.getAttribute('data-device-id');
+                
+                // Обновляем содержимое модального окна
+                var deviceToDeleteSpan = deleteModal.querySelector('#deviceToDelete');
+                deviceToDeleteSpan.textContent = deviceName;
+                
+                // Добавляем ID устройства к кнопке удаления для последующей обработки
+                var deleteButton = deleteModal.querySelector('.btn-danger');
+                deleteButton.setAttribute('data-device-id', deviceId);
+            });
+        });
+    </script>
 </body>
 </html>
 
