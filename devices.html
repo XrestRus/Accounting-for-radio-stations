@@ -1,571 +1,361 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Учет радиостанций - Управление устройствами</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-  <!-- Google Fonts (как альтернатива корпоративным шрифтам) -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <style>
-      :root {
-          --rzd-red: #E21A1A; /* Pantone 1795C */
-          --rzd-dark-red: #B71C1C;
-          --rzd-light-red: #FFCDD2;
-          --rzd-gray: #58595B;
-          --rzd-light-gray: #E0E0E0;
-          --rzd-white: #FFFFFF;
-          --rzd-black: #212121;
-      }
-      
-      body {
-          min-height: 100vh;
-          display: flex;
-          flex-direction: column;
-          font-family: 'Roboto', Arial, sans-serif; /* Альтернатива FSRailway */
-          background-color: var(--rzd-white);
-          color: var(--rzd-black);
-      }
-      
-      h1, h2, h3, h4, h5, h6, .navbar-brand {
-          font-family: 'Roboto', Arial, sans-serif; /* Альтернатива RussianRail G Pro */
-          font-weight: 700;
-      }
-      
-      .table-responsive {
-          overflow-x: auto;
-      }
-      
-      .action-buttons {
-          white-space: nowrap;
-      }
-      
-      .navbar-brand {
-          font-weight: bold;
-          color: var(--rzd-white) !important;
-      }
-      
-      .status-available {
-          color: #198754;
-      }
-      
-      .status-issued {
-          color: var(--rzd-red);
-      }
-      
-      .status-faulty {
-          color: #dc3545;
-      }
-      
-      .status-written-off {
-          color: var(--rzd-gray);
-      }
-      
-      /* Стили для бокового меню */
-      .sidebar {
-          width: 250px;
-          min-height: calc(100vh - 56px);
-          background-color: var(--rzd-white);
-          border-right: 1px solid var(--rzd-light-gray);
-      }
-      
-      .sidebar .nav-link {
-          color: var(--rzd-black);
-          padding: 0.8rem 1rem;
-          border-radius: 0;
-      }
-      
-      .sidebar .nav-link:hover {
-          background-color: var(--rzd-light-gray);
-      }
-      
-      .sidebar .nav-link.active {
-          color: var(--rzd-white);
-          background-color: var(--rzd-red);
-      }
-      
-      .sidebar .nav-link i {
-          margin-right: 0.5rem;
-      }
-      
-      .content-wrapper {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-      }
-      
-      .main-content {
-          flex: 1;
-          padding: 1.5rem;
-      }
-      
-      /* РЖД стилизация */
-      .navbar {
-          background-color: var(--rzd-red) !important;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
-      
-      .rzd-logo {
-          height: 30px;
-          margin-right: 10px;
-      }
-      
-      .rzd-header-line {
-          height: 4px;
-          background-color: var(--rzd-red);
-          margin-bottom: 1px;
-      }
-      
-      .rzd-header-line-thin {
-          height: 1px;
-          background-color: var(--rzd-red);
-          margin-bottom: 20px;
-      }
-      
-      .btn-primary {
-          background-color: var(--rzd-red) !important;
-          border-color: var(--rzd-red) !important;
-      }
-      
-      .btn-primary:hover, .btn-primary:focus {
-          background-color: var(--rzd-dark-red) !important;
-          border-color: var(--rzd-dark-red) !important;
-      }
-      
-      .btn-success {
-          background-color: var(--rzd-red) !important;
-          border-color: var(--rzd-red) !important;
-      }
-      
-      .btn-success:hover, .btn-success:focus {
-          background-color: var(--rzd-dark-red) !important;
-          border-color: var(--rzd-dark-red) !important;
-      }
-      
-      .form-control:focus, .form-select:focus {
-          border-color: var(--rzd-red);
-          box-shadow: 0 0 0 0.25rem rgba(226, 26, 26, 0.25);
-      }
-      
-      .form-control, .form-select {
-          border: 1px solid var(--rzd-light-gray);
-      }
-      
-      .form-control:hover, .form-select:hover {
-          border-color: var(--rzd-red);
-      }
-      
-      .card {
-          border: 1px solid var(--rzd-light-gray);
-          border-radius: 8px;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-      }
-      
-      .page-item.active .page-link {
-          background-color: var(--rzd-red);
-          border-color: var(--rzd-red);
-      }
-      
-      .page-link {
-          color: var(--rzd-red);
-      }
-      
-      .page-link:hover {
-          color: var(--rzd-dark-red);
-      }
-      
-      .badge.bg-success {
-          background-color: #198754 !important;
-      }
-      
-      .badge.bg-primary {
-          background-color: var(--rzd-red) !important;
-      }
-      
-      .badge.bg-danger {
-          background-color: #dc3545 !important;
-      }
-      
-      .badge.bg-secondary {
-          background-color: var(--rzd-gray) !important;
-      }
-      
-      /* Стилеобразующий элемент - фоновый узор */
-      .rzd-pattern-bg {
-          position: relative;
-          overflow: hidden;
-      }
-      
-      .rzd-pattern-bg::before {
-          content: "";
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M0,40 L100,40" stroke="%23E21A1A" stroke-width="0.5" opacity="0.1"/><path d="M0,60 L100,60" stroke="%23E21A1A" stroke-width="0.5" opacity="0.1"/></svg>');
-          opacity: 0.05;
-          z-index: -1;
-      }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Учет радиостанций - Управление устройствами</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-  <!-- Верхняя навигационная панель -->
-  <nav class="navbar navbar-expand-lg navbar-dark">
-      <div class="container-fluid">
-          <a class="navbar-brand" href="#">
-              <img src="https://www.rzd.ru/api/media/resources/1691208" alt="РЖД Логотип" class="rzd-logo">
-              Учет радиостанций
-          </a>
-          <ul class="navbar-nav ms-auto">
-              <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
-                      <i class="bi bi-person-circle"></i> Администратор
-                  </a>
-                  <ul class="dropdown-menu dropdown-menu-end">
-                      <li><a class="dropdown-item" href="#">Профиль</a></li>
-                      <li><a class="dropdown-item" href="users.html">Управление пользователями</a></li>
-                      <li><hr class="dropdown-divider"></li>
-                      <li><a class="dropdown-item" href="login.html">Выход</a></li>
-                  </ul>
-              </li>
-          </ul>
-      </div>
-  </nav>
-  
-  <!-- Красная линия под шапкой -->
-  <div class="rzd-header-line"></div>
-  <div class="rzd-header-line-thin"></div>
+    <!-- Верхняя навигационная панель -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Учет радиостанций</a>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle"></i> Администратор
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#">Профиль</a></li>
+                        <li><a class="dropdown-item" href="#">Управление пользователями</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Выход</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
-  <div class="d-flex">
-      <!-- Боковое меню -->
-      <div class="sidebar">
-          <div class="d-flex flex-column p-3">
-              <ul class="nav nav-pills flex-column mb-auto">
-                  <li class="nav-item">
-                      <a href="#" class="nav-link">
-                          <i class="bi bi-speedometer2"></i> Главная
-                      </a>
-                  </li>
-                  <li class="nav-item">
-                      <a href="#" class="nav-link">
-                          <i class="bi bi-box-arrow-right"></i> Выдача устройств
-                      </a>
-                  </li>
-                  <li class="nav-item">
-                      <a href="#" class="nav-link">
-                          <i class="bi bi-box-arrow-in-left"></i> Возврат устройств
-                      </a>
-                  </li>
-                  <li class="nav-item">
-                      <a href="#" class="nav-link active">
-                          <i class="bi bi-device-hdd"></i> Управление устройствами
-                      </a>
-                  </li>
-                  <li class="nav-item">
-                      <a href="#" class="nav-link">
-                          <i class="bi bi-journal-text"></i> Журнал учета
-                      </a>
-                  </li>
-                  <li class="nav-item">
-                      <a href="#" class="nav-link">
-                          <i class="bi bi-file-earmark-text"></i> Отчеты
-                      </a>
-                  </li>
-                  <li class="nav-item">
-                      <a href="#" class="nav-link">
-                          <i class="bi bi-people"></i> Сотрудники
-                      </a>
-                  </li>
-                  <li class="nav-item">
-                      <a href="#" class="nav-link">
-                          <i class="bi bi-gear"></i> Настройки
-                      </a>
-                  </li>
-              </ul>
-          </div>
-      </div>
+    <div class="d-flex">
+        <!-- Боковое меню -->
+        <div class="sidebar">
+            <div class="d-flex flex-column p-3">
+                <ul class="nav nav-pills flex-column mb-auto">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-speedometer2"></i> Главная
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-box-arrow-right"></i> Выдача устройств
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-box-arrow-in-left"></i> Возврат устройств
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active">
+                            <i class="bi bi-device-hdd"></i> Управление устройствами
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-journal-text"></i> Журнал учета
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-file-earmark-text"></i> Отчеты
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-people"></i> Сотрудники
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-gear"></i> Настройки
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
 
-      <!-- Основной контент -->
-      <div class="content-wrapper rzd-pattern-bg">
-          <div class="main-content">
-              <div class="d-flex justify-content-between align-items-center mb-4">
-                  <h1>Управление устройствами</h1>
-                  <a href="device-edit.html" class="btn btn-success">
-                      <i class="bi bi-plus-lg"></i> Добавить устройство
-                  </a>
-              </div>
+        <!-- Основной контент -->
+        <div class="content-wrapper">
+            <div class="main-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Управление устройствами</h1>
+                    <a href="device-edit.html" class="btn btn-success">
+                        <i class="bi bi-plus-lg"></i> Добавить устройство
+                    </a>
+                </div>
 
-              <!-- Фильтры и поиск -->
-              <div class="card mb-4">
-                  <div class="card-body">
-                      <div class="row g-3">
-                          <div class="col-md-4">
-                              <label for="searchInput" class="form-label">Поиск</label>
-                              <input type="text" class="form-control" id="searchInput" placeholder="Название, серийный номер...">
-                          </div>
-                          <div class="col-md-3">
-                              <label for="typeFilter" class="form-label">Тип устройства</label>
-                              <select class="form-select" id="typeFilter">
-                                  <option value="">Все типы</option>
-                                  <option value="radio">Радиостанция</option>
-                                  <option value="carrier">Носитель информации</option>
-                                  <option value="security">Устройство безопасности</option>
-                              </select>
-                          </div>
-                          <div class="col-md-3">
-                              <label for="statusFilter" class="form-label">Статус</label>
-                              <select class="form-select" id="statusFilter">
-                                  <option value="">Все статусы</option>
-                                  <option value="available">Доступно</option>
-                                  <option value="issued">Выдано</option>
-                                  <option value="faulty">Неисправно</option>
-                                  <option value="written-off">Списано</option>
-                              </select>
-                          </div>
-                          <div class="col-md-2 d-flex align-items-end">
-                              <button type="button" class="btn btn-primary w-100">Применить</button>
-                          </div>
-                      </div>
-                  </div>
-              </div>
+                <!-- Фильтры и поиск -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="searchInput" class="form-label">Поиск</label>
+                                <input type="text" class="form-control" id="searchInput" placeholder="Название, серийный номер...">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="typeFilter" class="form-label">Тип устройства</label>
+                                <select class="form-select" id="typeFilter">
+                                    <option value="">Все типы</option>
+                                    <option value="radio">Радиостанция</option>
+                                    <option value="carrier">Носитель информации</option>
+                                    <option value="security">Устройство безопасности</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="statusFilter" class="form-label">Статус</label>
+                                <select class="form-select" id="statusFilter">
+                                    <option value="">Все статусы</option>
+                                    <option value="available">Доступно</option>
+                                    <option value="issued">Выдано</option>
+                                    <option value="faulty">Неисправно</option>
+                                    <option value="written-off">Списано</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="button" class="btn btn-primary w-100">Применить</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-              <!-- Таблица устройств -->
-              <div class="card">
-                  <div class="card-body">
-                      <div class="table-responsive">
-                          <table class="table table-hover">
-                              <thead>
-                                  <tr>
-                                      <th scope="col">#</th>
-                                      <th scope="col">Название</th>
-                                      <th scope="col">Тип</th>
-                                      <th scope="col">Серийный номер</th>
-                                      <th scope="col">QR/Штрих-код</th>
-                                      <th scope="col">Статус</th>
-                                      <th scope="col">Дата создания</th>
-                                      <th scope="col">Действия</th>
-                                  </tr>
-                              </thead>
-                              <tbody>
-                                  <tr>
-                                      <th scope="row">1</th>
-                                      <td>Радиостанция АК-9</td>
-                                      <td>Радиостанция</td>
-                                      <td>SN123456</td>
-                                      <td>QR123</td>
-                                      <td><span class="badge bg-success">Доступно</span></td>
-                                      <td>01.10.2023</td>
-                                      <td class="action-buttons">
-                                          <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#deviceInfoModal" title="Информация">
-                                              <i class="bi bi-info-circle"></i>
-                                          </button>
-                                          <a href="device-edit.html?id=1" class="btn btn-sm btn-primary">
-                                              <i class="bi bi-pencil"></i>
-                                          </a>
-                                          <button type="button" class="btn btn-sm btn-danger">
-                                              <i class="bi bi-trash"></i>
-                                          </button>
-                                      </td>
-                                  </tr>
-                                  <tr>
-                                      <th scope="row">2</th>
-                                      <td>Носитель КР-М</td>
-                                      <td>Носитель информации</td>
-                                      <td>SN654321</td>
-                                      <td>QR456</td>
-                                      <td><span class="badge bg-secondary">Списано</span></td>
-                                      <td>01.10.2023</td>
-                                      <td class="action-buttons">
-                                          <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#deviceInfoModal" title="Информация">
-                                              <i class="bi bi-info-circle"></i>
-                                          </button>
-                                          <a href="device-edit.html?id=2" class="btn btn-sm btn-primary">
-                                              <i class="bi bi-pencil"></i>
-                                          </a>
-                                          <button type="button" class="btn btn-sm btn-danger">
-                                              <i class="bi bi-trash"></i>
-                                          </button>
-                                      </td>
-                                  </tr>
-                                  <tr>
-                                      <th scope="row">3</th>
-                                      <td>ТСКБМ-Н</td>
-                                      <td>Устройство безопасности</td>
-                                      <td>SN789012</td>
-                                      <td>QR789</td>
-                                      <td><span class="badge bg-primary">Выдано</span></td>
-                                      <td>02.10.2023</td>
-                                      <td class="action-buttons">
-                                          <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#deviceInfoModal" title="Информация">
-                                              <i class="bi bi-info-circle"></i>
-                                          </button>
-                                          <a href="device-edit.html?id=3" class="btn btn-sm btn-primary">
-                                              <i class="bi bi-pencil"></i>
-                                          </a>
-                                          <button type="button" class="btn btn-sm btn-danger">
-                                              <i class="bi bi-trash"></i>
-                                          </button>
-                                      </td>
-                                  </tr>
-                                  <tr>
-                                      <th scope="row">4</th>
-                                      <td>БЛОК</td>
-                                      <td>Устройство безопасности</td>
-                                      <td>SN345678</td>
-                                      <td>QR012</td>
-                                      <td><span class="badge bg-danger">Неисправно</span></td>
-                                      <td>03.10.2023</td>
-                                      <td class="action-buttons">
-                                          <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#deviceInfoModal" title="Информация">
-                                              <i class="bi bi-info-circle"></i>
-                                          </button>
-                                          <a href="device-edit.html?id=4" class="btn btn-sm btn-primary">
-                                              <i class="bi bi-pencil"></i>
-                                          </a>
-                                          <button type="button" class="btn btn-sm btn-danger">
-                                              <i class="bi bi-trash"></i>
-                                          </button>
-                                      </td>
-                                  </tr>
-                                  <tr>
-                                      <th scope="row">5</th>
-                                      <td>МПМЭ-128</td>
-                                      <td>Устройство безопасности</td>
-                                      <td>SN901234</td>
-                                      <td>QR345</td>
-                                      <td><span class="badge bg-success">Доступно</span></td>
-                                      <td>04.10.2023</td>
-                                      <td class="action-buttons">
-                                          <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#deviceInfoModal" title="Информация">
-                                              <i class="bi bi-info-circle"></i>
-                                          </button>
-                                          <a href="device-edit.html?id=5" class="btn btn-sm btn-primary">
-                                              <i class="bi bi-pencil"></i>
-                                          </a>
-                                          <button type="button" class="btn btn-sm btn-danger">
-                                              <i class="bi bi-trash"></i>
-                                          </button>
-                                      </td>
-                                  </tr>
-                              </tbody>
-                          </table>
-                      </div>
+                <!-- Таблица устройств -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Название</th>
+                                        <th scope="col">Тип</th>
+                                        <th scope="col">Серийный номер</th>
+                                        <th scope="col">QR/Штрих-код</th>
+                                        <th scope="col">Статус</th>
+                                        <th scope="col">Дата создания</th>
+                                        <th scope="col">Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">1</th>
+                                        <td>Радиостанция АК-9</td>
+                                        <td>Радиостанция</td>
+                                        <td>SN123456</td>
+                                        <td>QR123</td>
+                                        <td><span class="badge bg-success">Доступно</span></td>
+                                        <td>01.10.2023</td>
+                                        <td class="action-buttons">
+                                            <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#deviceInfoModal" title="Информация">
+                                                <i class="bi bi-info-circle"></i>
+                                            </button>
+                                            <a href="device-edit.html?id=1" class="btn btn-sm btn-primary">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-danger">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">2</th>
+                                        <td>Носитель КР-М</td>
+                                        <td>Носитель информации</td>
+                                        <td>SN654321</td>
+                                        <td>QR456</td>
+                                        <td><span class="badge bg-secondary">Списано</span></td>
+                                        <td>01.10.2023</td>
+                                        <td class="action-buttons">
+                                            <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#deviceInfoModal" title="Информация">
+                                                <i class="bi bi-info-circle"></i>
+                                            </button>
+                                            <a href="device-edit.html?id=2" class="btn btn-sm btn-primary">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-danger">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">3</th>
+                                        <td>ТСКБМ-Н</td>
+                                        <td>Устройство безопасности</td>
+                                        <td>SN789012</td>
+                                        <td>QR789</td>
+                                        <td><span class="badge bg-primary">Выдано</span></td>
+                                        <td>02.10.2023</td>
+                                        <td class="action-buttons">
+                                            <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#deviceInfoModal" title="Информация">
+                                                <i class="bi bi-info-circle"></i>
+                                            </button>
+                                            <a href="device-edit.html?id=3" class="btn btn-sm btn-primary">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-danger">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">4</th>
+                                        <td>БЛОК</td>
+                                        <td>Устройство безопасности</td>
+                                        <td>SN345678</td>
+                                        <td>QR012</td>
+                                        <td><span class="badge bg-danger">Неисправно</span></td>
+                                        <td>03.10.2023</td>
+                                        <td class="action-buttons">
+                                            <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#deviceInfoModal" title="Информация">
+                                                <i class="bi bi-info-circle"></i>
+                                            </button>
+                                            <a href="device-edit.html?id=4" class="btn btn-sm btn-primary">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-danger">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">5</th>
+                                        <td>МПМЭ-128</td>
+                                        <td>Устройство безопасности</td>
+                                        <td>SN901234</td>
+                                        <td>QR345</td>
+                                        <td><span class="badge bg-success">Доступно</span></td>
+                                        <td>04.10.2023</td>
+                                        <td class="action-buttons">
+                                            <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#deviceInfoModal" title="Информация">
+                                                <i class="bi bi-info-circle"></i>
+                                            </button>
+                                            <a href="device-edit.html?id=5" class="btn btn-sm btn-primary">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-danger">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
 
-                      <!-- Пагинация -->
-                      <nav aria-label="Навигация по страницам">
-                          <ul class="pagination justify-content-center mt-4">
-                              <li class="page-item disabled">
-                                  <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Предыдущая</a>
-                              </li>
-                              <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                              <li class="page-item"><a class="page-link" href="#">2</a></li>
-                              <li class="page-item"><a class="page-link" href="#">3</a></li>
-                              <li class="page-item">
-                                  <a class="page-link" href="#">Следующая</a>
-                              </li>
-                          </ul>
-                      </nav>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
+                        <!-- Пагинация -->
+                        <nav aria-label="Навигация по страницам">
+                            <ul class="pagination justify-content-center mt-4">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Предыдущая</a>
+                                </li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">Следующая</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-  <!-- Модальное окно для просмотра информации об устройстве -->
-  <div class="modal fade" id="deviceInfoModal" tabindex="-1" aria-labelledby="deviceInfoModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <h5 class="modal-title" id="deviceInfoModalLabel">Информация об устройстве</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-              </div>
-              <div class="modal-body">
-                  <div class="row">
-                      <div class="col-md-6">
-                          <h6>Основная информация</h6>
-                          <p><strong>Название:</strong> Радиостанция АК-9</p>
-                          <p><strong>Тип:</strong> Радиостанция</p>
-                          <p><strong>Серийный номер:</strong> SN123456</p>
-                          <p><strong>QR/Штрих-код:</strong> QR123</p>
-                          <p><strong>Статус:</strong> <span class="badge bg-success">Доступно</span></p>
-                          <p><strong>Дата создания:</strong> 01.10.2023</p>
-                      </div>
-                      <div class="col-md-6">
-                          <h6>Дополнительная информация</h6>
-                          <p><strong>Описание:</strong> Портативная радиостанция для связи машинистов</p>
-                          <p><strong>Инвентарный номер:</strong> INV-2023-001</p>
-                          <p><strong>Местоположение:</strong> Склад №2</p>
-                          <p><strong>Последняя проверка:</strong> 28.09.2023</p>
-                      </div>
-                  </div>
-                  <div class="row mt-3">
-                      <div class="col-12">
-                          <h6>История использования</h6>
-                          <div class="table-responsive">
-                              <table class="table table-sm table-bordered">
-                                  <thead>
-                                      <tr>
-                                          <th>Дата</th>
-                                          <th>Операция</th>
-                                          <th>Сотрудник</th>
-                                          <th>Статус</th>
-                                      </tr>
-                                  </thead>
-                                  <tbody>
-                                      <tr>
-                                          <td>01.10.2023 12:00</td>
-                                          <td>Выдача</td>
-                                          <td>Иванов И.И.</td>
-                                          <td><span class="badge bg-warning text-dark">Выдано</span></td>
-                                      </tr>
-                                      <tr>
-                                          <td>04.10.2023 10:30</td>
-                                          <td>Возврат</td>
-                                          <td>Иванов И.И.</td>
-                                          <td><span class="badge bg-success">Возвращено</span></td>
-                                      </tr>
-                                  </tbody>
-                              </table>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-              <div class="modal-footer">
-                  <a href="device-edit.html?id=1" class="btn btn-primary">
-                      <i class="bi bi-pencil"></i> Редактировать
-                  </a>
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-              </div>
-          </div>
-      </div>
-  </div>
+    <!-- Модальное окно для просмотра информации об устройстве -->
+    <div class="modal fade" id="deviceInfoModal" tabindex="-1" aria-labelledby="deviceInfoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deviceInfoModalLabel">Информация об устройстве</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Основная информация</h6>
+                            <p><strong>Название:</strong> Радиостанция АК-9</p>
+                            <p><strong>Тип:</strong> Радиостанция</p>
+                            <p><strong>Серийный номер:</strong> SN123456</p>
+                            <p><strong>QR/Штрих-код:</strong> QR123</p>
+                            <p><strong>Статус:</strong> <span class="badge bg-success">Доступно</span></p>
+                            <p><strong>Дата создания:</strong> 01.10.2023</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Дополнительная информация</h6>
+                            <p><strong>Описание:</strong> Портативная радиостанция для связи машинистов</p>
+                            <p><strong>Инвентарный номер:</strong> INV-2023-001</p>
+                            <p><strong>Местоположение:</strong> Склад №2</p>
+                            <p><strong>Последняя проверка:</strong> 28.09.2023</p>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>История использования</h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Дата</th>
+                                            <th>Операция</th>
+                                            <th>Сотрудник</th>
+                                            <th>Статус</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>01.10.2023 12:00</td>
+                                            <td>Выдача</td>
+                                            <td>Иванов И.И.</td>
+                                            <td><span class="badge bg-warning text-dark">Выдано</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>04.10.2023 10:30</td>
+                                            <td>Возврат</td>
+                                            <td>Иванов И.И.</td>
+                                            <td><span class="badge bg-success">Возвращено</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="device-edit.html?id=1" class="btn btn-primary">
+                        <i class="bi bi-pencil"></i> Редактировать
+                    </a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-  <!-- Модальное окно для подтверждения удаления -->
-  <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <h5 class="modal-title" id="deleteModalLabel">Подтверждение удаления</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-              </div>
-              <div class="modal-body">
-                  <p>Вы уверены, что хотите удалить устройство "<span id="deviceToDelete">Радиостанция АК-9</span>"?</p>
-                  <p class="text-danger">Это действие нельзя будет отменить.</p>
-              </div>
-              <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                  <button type="button" class="btn btn-danger">Удалить</button>
-              </div>
-          </div>
-      </div>
-  </div>
+    <!-- Модальное окно для подтверждения удаления -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Подтверждение удаления</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Вы уверены, что хотите удалить устройство "<span id="deviceToDelete">Радиостанция АК-9</span>"?</p>
+                    <p class="text-danger">Это действие нельзя будет отменить.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn btn-danger">Удалить</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JS (без JavaScript функциональности) -->
 </body>
 </html>
 

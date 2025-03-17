@@ -8,75 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <style>
-        body {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .table-responsive {
-            overflow-x: auto;
-        }
-        
-        .action-buttons {
-            white-space: nowrap;
-        }
-        
-        .navbar-brand {
-            font-weight: bold;
-        }
-        
-        /* Стили для бокового меню */
-        .sidebar {
-            width: 250px;
-            min-height: calc(100vh - 56px);
-            background-color: #f8f9fa;
-            border-right: 1px solid #dee2e6;
-        }
-        
-        .sidebar .nav-link {
-            color: #495057;
-            padding: 0.8rem 1rem;
-            border-radius: 0;
-        }
-        
-        .sidebar .nav-link:hover {
-            background-color: #e9ecef;
-        }
-        
-        .sidebar .nav-link.active {
-            color: #fff;
-            background-color: #0d6efd;
-        }
-        
-        .sidebar .nav-link i {
-            margin-right: 0.5rem;
-        }
-        
-        .content-wrapper {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .main-content {
-            flex: 1;
-            padding: 1.5rem;
-        }
-        
-        .employee-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: #e9ecef;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #495057;
-        }
-    </style>
+    <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
     <!-- Верхняя навигационная панель -->
@@ -203,7 +135,7 @@
                                         <th scope="row">1</th>
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                <div class="employee-avatar me-2">ИИ</div>
+                                                <div class="employee-avatar">ИИ</div>
                                                 <div>Иванов Иван Иванович</div>
                                             </div>
                                         </td>
@@ -229,7 +161,7 @@
                                         <th scope="row">2</th>
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                <div class="employee-avatar me-2">ПП</div>
+                                                <div class="employee-avatar">ПП</div>
                                                 <div>Петров Петр Петрович</div>
                                             </div>
                                         </td>
@@ -255,7 +187,7 @@
                                         <th scope="row">3</th>
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                <div class="employee-avatar me-2">СС</div>
+                                                <div class="employee-avatar">СС</div>
                                                 <div>Сидоров Сергей Сергеевич</div>
                                             </div>
                                         </td>
@@ -281,7 +213,7 @@
                                         <th scope="row">4</th>
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                <div class="employee-avatar me-2">КА</div>
+                                                <div class="employee-avatar">КА</div>
                                                 <div>Козлова Анна Александровна</div>
                                             </div>
                                         </td>
@@ -307,7 +239,7 @@
                                         <th scope="row">5</th>
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                <div class="employee-avatar me-2">НВ</div>
+                                                <div class="employee-avatar">НВ</div>
                                                 <div>Новиков Владимир Михайлович</div>
                                             </div>
                                         </td>
@@ -365,8 +297,13 @@
                     <div class="row">
                         <div class="col-md-6">
                             <h6>Основная информация</h6>
-                            <p><strong>ФИО:</strong> Иванов Иван Иванович</p>
-                            <p><strong>Должность:</strong> Машинист</p>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="employee-avatar" style="width: 60px; height: 60px; font-size: 1.2rem;">ИИ</div>
+                                <div class="ms-3">
+                                    <h5 class="mb-0">Иванов Иван Иванович</h5>
+                                    <span class="text-muted">Машинист</span>
+                                </div>
+                            </div>
                             <p><strong>Подразделение:</strong> Локомотивное депо</p>
                             <p><strong>Табельный номер:</strong> 12345</p>
                         </div>

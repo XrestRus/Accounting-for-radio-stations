@@ -1,0 +1,347 @@
+/* Combined CSS styles from all HTML files */
+/* Generated on Mon Mar 17 17:38:22 +07 2025 */
+
+/* General Styles */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Navbar Styles */
+.navbar-brand {
+    font-weight: bold;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 250px;
+    min-height: calc(100vh - 56px);
+    background-color: #f8f9fa;
+    border-right: 1px solid #dee2e6;
+}
+
+.sidebar .nav-link {
+    color: #495057;
+    padding: 0.8rem 1rem;
+    border-radius: 0;
+}
+
+.sidebar .nav-link:hover {
+    background-color: #e9ecef;
+}
+
+.sidebar .nav-link.active {
+    color: #fff;
+    background-color: #0d6efd;
+}
+
+.sidebar .nav-link i {
+    margin-right: 0.5rem;
+}
+
+/* Content Styles */
+.content-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex: 1;
+    padding: 1.5rem;
+}
+
+/* Table Styles */
+.table-responsive {
+    overflow-x: auto;
+}
+
+.action-buttons {
+    white-space: nowrap;
+}
+
+/* Status Styles */
+.status-available {
+    color: #198754;
+}
+
+.status-issued {
+    color: #0d6efd;
+}
+
+.status-faulty {
+    color: #dc3545;
+}
+
+.status-written-off {
+    color: #6c757d;
+}
+
+.status-badge {
+    font-size: 0.75rem;
+    padding: 0.35em 0.65em;
+}
+
+.status-active {
+    color: #198754;
+}
+
+.status-inactive {
+    color: #dc3545;
+}
+
+/* Form Styles */
+.required-field::after {
+    content: " *";
+    color: red;
+}
+
+/* Login Styles */
+.login-container {
+    max-width: 400px;
+    width: 100%;
+    padding: 15px;
+}
+
+.login-card {
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-header {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.login-logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #0d6efd;
+    margin-bottom: 10px;
+}
+
+.login-title {
+    font-size: 18px;
+    color: #6c757d;
+}
+
+.login-form {
+    padding: 20px;
+}
+
+.form-floating {
+    margin-bottom: 15px;
+}
+
+.login-footer {
+    text-align: center;
+    padding: 15px;
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 10px;
+}
+
+.forgot-password {
+    text-align: right;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+/* Help Styles */
+.help-content h2 {
+    color: #0d6efd;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.help-content h3 {
+    color: #0d6efd;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.help-content p {
+    margin-bottom: 1rem;
+}
+
+.help-content ul {
+    margin-bottom: 1rem;
+}
+
+.help-content .card {
+    margin-bottom: 1rem;
+}
+
+.help-content .card-header {
+    background-color: #e7f1ff;
+    color: #0d6efd;
+}
+
+.help-image {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    margin: 1rem 0;
+}
+
+.faq-item {
+    margin-bottom: 1rem;
+}
+
+.faq-question {
+    font-weight: bold;
+    color: #0d6efd;
+    margin-bottom: 0.5rem;
+}
+
+.faq-answer {
+    margin-bottom: 1rem;
+}
+
+/* Device Styles */
+.device-card {
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: #fff;
+}
+
+.device-card.selected {
+    border-color: #0d6efd;
+    background-color: #e7f1ff;
+}
+
+.device-card:hover {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.device-card.selected:hover {
+    box-shadow: 0 0.125rem 0.25rem rgba(13, 110, 253, 0.2);
+}
+
+.device-type-badge {
+    font-size: 0.75rem;
+}
+
+/* User Styles */
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #dee2e6;
+}
+
+.user-avatar-preview {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #dee2e6;
+    margin-bottom: 1rem;
+}
+
+/* Settings Styles */
+.settings-nav .nav-link {
+    color: #495057;
+    padding: 0.8rem 1rem;
+    border-radius: 0.25rem;
+}
+
+.settings-nav .nav-link:hover {
+    background-color: #e9ecef;
+}
+
+.settings-nav .nav-link.active {
+    color: #fff;
+    background-color: #0d6efd;
+    font-weight: bold;
+}
+
+.settings-nav .nav-link i {
+    margin-right: 0.5rem;
+}
+
+/* Scan Styles */
+.scan-area {
+    border: 2px dashed #dee2e6;
+    border-radius: 0.25rem;
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    background-color: #f8f9fa;
+}
+
+.scan-icon {
+    font-size: 3rem;
+    color: #6c757d;
+    margin-bottom: 1rem;
+}
+
+.quick-select-btn {
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Employee Styles */
+.employee-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #495057;
+    margin-right: 10px;
+}
+
+/* Role Styles */
+.role-badge {
+    font-size: 0.75rem;
+    padding: 0.35em 0.65em;
+}
+
+/* Image Upload Styles */
+.image-upload-container, .avatar-upload-container {
+    border: 2px dashed #dee2e6;
+    border-radius: 0.25rem;
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+.image-upload-container:hover, .avatar-upload-container:hover {
+    border-color: #0d6efd;
+    background-color: #e7f1ff;
+}
+
+.image-upload-icon, .avatar-upload-icon {
+    font-size: 2rem;
+    color: #6c757d;
+    margin-bottom: 1rem;
+}
+
+.image-preview {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.25rem;
+    margin-top: 1rem;
+}
+
+/* Password Toggle */
+.password-toggle {
+    cursor: pointer;
+}
