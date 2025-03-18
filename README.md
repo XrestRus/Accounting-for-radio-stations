@@ -3,6 +3,24 @@ Accounting for radio stations
 
 # Изображения
 
+<details >
+    <summary>Первая версия стилей</summary>
+    
+  ![](https://github.com/XrestRus/Accounting-for-radio-stations/blob/master/context/1.img-before-style.png)
+</details> 
+
+<details >
+    <summary>Вторая версия стилей</summary>
+   
+  ![](https://github.com/XrestRus/Accounting-for-radio-stations/blob/master/context/2.img-after-style.png)
+</details> 
+
+<details >
+    <summary>Структура верстки</summary>
+    
+  ![](https://github.com/XrestRus/Accounting-for-radio-stations/blob/master/context/4.code.png)
+</details> 
+
 
 # Прототип
 - РЖД - https://rzd-bonus.ru/promo-fpk-archive/
