@@ -1,6 +1,12 @@
 # Accounting-for-radio-stations
 Accounting for radio stations
 
+# Изображения
+
+
+# Прототип
+- РЖД - https://rzd-bonus.ru/promo-fpk-archive/
+
 # Лог эксперимента
 
 - день 1 (1ч): подготовка ТЗ через deepseek
