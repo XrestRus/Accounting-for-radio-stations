@@ -21,10 +21,6 @@ Accounting for radio stations
   ![](https://github.com/XrestRus/Accounting-for-radio-stations/blob/master/context/4.code.png)
 </details> 
 
-
-# Прототип
-- РЖД - https://rzd-bonus.ru/promo-fpk-archive/
-
 # Лог эксперимента
 
 - день 1 (1ч): подготовка ТЗ через deepseek
