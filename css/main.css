@@ -27,6 +27,19 @@ body {
     padding: 0;
 }
 
+/* Layout Constraints */
+.container-fluid {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Main Layout */
+body > .d-flex {
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
 /* Navbar Styles */
 .navbar {
     background-color: #333333 !important;
@@ -127,6 +140,9 @@ body {
     display: flex;
     flex-direction: column;
     background-color: var(--rzd-light-gray);
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
 }
 
 .main-content {
@@ -357,11 +373,13 @@ h1 {
     max-width: 400px;
     width: 100%;
     padding: 15px;
+    margin: 80px auto 0;
 }
 
 .login-card {
-    border-radius: 10px;
+    border-radius: 0;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-top: 3px solid var(--rzd-primary);
 }
 
 .login-header {
@@ -372,13 +390,13 @@ h1 {
 .login-logo {
     font-size: 24px;
     font-weight: bold;
-    color: #0d6efd;
+    color: var(--rzd-secondary);
     margin-bottom: 10px;
 }
 
 .login-title {
     font-size: 18px;
-    color: #6c757d;
+    color: var(--rzd-dark-gray);
 }
 
 .login-form {
@@ -393,12 +411,14 @@ h1 {
     text-align: center;
     padding: 15px;
     font-size: 14px;
-    color: #6c757d;
+    color: var(--rzd-dark-gray);
+    background-color: var(--rzd-light-gray);
 }
 
 .login-btn {
     width: 100%;
     padding: 10px;
+    margin-top: 10px;
 }
 
 .forgot-password {
