@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Учет радиостанций - Авторизация{% endblock %}
+
+{% block header %}{% endblock %}
+{% block sidebar %}{% endblock %}
+
+{% block body %}
+<body class="bg-light">
+    <div class="login-container">
+        <div class="card login-card">
+            <div class="login-header">
+                <div class="login-logo">
+                    <i class="bi bi-broadcast"></i> Учет радиостанций
+                </div>
+                <div class="login-title">
+                    Авторизация в системе
+                </div>
+            </div>
+            <div class="login-form">
+                <form action="{{ path('app_dashboard') }}" method="post">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Имя пользователя" required>
+                        <label for="username">Имя пользователя</label>
+                    </div>
+                    <div class="form-floating">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Пароль" required>
+                        <label for="password">Пароль</label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" value="" id="rememberMe">
+                        <label class="form-check-label" for="rememberMe">
+                            Запомнить меня
+                        </label>
+                    </div>
+                    <div class="forgot-password">
+                        <a href="#" class="text-decoration-none">Забыли пароль?</a>
+                    </div>
+                    <button type="submit" class="btn btn-primary login-btn">Войти</button>
+                </form>
+            </div>
+            <div class="login-footer">
+                <p class="mb-0">© 2023 Учет радиостанций. Все права защищены.</p>
+            </div>
+        </div>
+        
+        <!-- Сообщение об ошибке (скрыто по умолчанию) -->
+        <div class="alert alert-danger mt-3 d-none" id="loginError" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i> Неверное имя пользователя или пароль.
+        </div>
+    </div>
+</body>
+{% endblock %} 

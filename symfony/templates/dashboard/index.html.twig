@@ -1,0 +1,291 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Учет радиостанций - Главная{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="d-flex align-items-center">
+        <h1 class="mb-0 me-3">Панель управления</h1>
+        <span class="text-muted">Последнее обновление: сегодня, 10:15</span>
+    </div>
+    <button type="button" class="btn btn-sm btn-outline-secondary">
+        <i class="bi bi-arrow-clockwise"></i> Обновить
+    </button>
+</div>
+
+<!-- Статистика -->
+<div class="row g-3 mb-3">
+    <div class="col-md-3">
+        <div class="card stat-card stat-card-primary">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-subtitle mb-1 text-muted">Всего устройств</h6>
+                        <div class="stat-number">124</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="bi bi-device-hdd"></i>
+                    </div>
+                </div>
+                <div class="mt-2 small">
+                    <span class="text-success">
+                        <i class="bi bi-arrow-up"></i> 5%
+                    </span>
+                    <span class="text-muted ms-2">с прошлого месяца</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card stat-card-success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-subtitle mb-1 text-muted">Доступно</h6>
+                        <div class="stat-number">87</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                </div>
+                <div class="mt-2 small">
+                    <span class="text-success">
+                        <i class="bi bi-arrow-up"></i> 3%
+                    </span>
+                    <span class="text-muted ms-2">с прошлого месяца</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card stat-card-warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-subtitle mb-1 text-muted">Выдано</h6>
+                        <div class="stat-number">32</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </div>
+                </div>
+                <div class="mt-2 small">
+                    <span class="text-danger">
+                        <i class="bi bi-arrow-up"></i> 12%
+                    </span>
+                    <span class="text-muted ms-2">с прошлого месяца</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card stat-card-danger">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-subtitle mb-1 text-muted">Просрочено</h6>
+                        <div class="stat-number">5</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </div>
+                </div>
+                <div class="mt-2 small">
+                    <span class="text-danger">
+                        <i class="bi bi-arrow-up"></i> 2%
+                    </span>
+                    <span class="text-muted ms-2">с прошлого месяца</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Быстрые действия -->
+<div class="row g-3 mb-3">
+    <div class="col-md-3">
+        <div class="card dashboard-card text-center">
+            <div class="card-body py-3">
+                <div class="dashboard-icon text-primary">
+                    <i class="bi bi-box-arrow-right"></i>
+                </div>
+                <h5 class="card-title">Выдача устройства</h5>
+                <p class="card-text small mb-3">Оформление выдачи устройства</p>
+                <a href="{{ path('app_device_issue') }}" class="btn btn-primary btn-sm">Перейти</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card dashboard-card text-center">
+            <div class="card-body py-3">
+                <div class="dashboard-icon text-success">
+                    <i class="bi bi-box-arrow-in-left"></i>
+                </div>
+                <h5 class="card-title">Возврат устройства</h5>
+                <p class="card-text small mb-3">Оформление возврата устройства</p>
+                <a href="{{ path('app_device_return') }}" class="btn btn-success btn-sm">Перейти</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card dashboard-card text-center">
+            <div class="card-body py-3">
+                <div class="dashboard-icon text-info">
+                    <i class="bi bi-journal-text"></i>
+                </div>
+                <h5 class="card-title">Журнал учета</h5>
+                <p class="card-text small mb-3">Просмотр истории выдачи устройств</p>
+                <a href="{{ path('app_journal') }}" class="btn btn-info text-white btn-sm">Перейти</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card dashboard-card text-center">
+            <div class="card-body py-3">
+                <div class="dashboard-icon text-warning">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <h5 class="card-title">Просроченные</h5>
+                <p class="card-text small mb-3">Устройства с истекшим сроком</p>
+                <a href="#" class="btn btn-warning text-dark btn-sm">Просмотр</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- Недавняя активность -->
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Недавняя активность</h5>
+                <a href="{{ path('app_journal') }}" class="btn btn-sm btn-outline-primary">Все записи</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="recent-activity-item px-3">
+                    <div class="recent-activity-time">Сегодня, 10:15</div>
+                    <div class="mt-1 small">
+                        <strong>Администратор</strong> выдал устройство <strong>Радиостанция АК-9</strong> сотруднику <strong>Иванов И.И.</strong>
+                    </div>
+                </div>
+                <div class="recent-activity-item px-3">
+                    <div class="recent-activity-time">Сегодня, 09:30</div>
+                    <div class="mt-1 small">
+                        <strong>Оператор</strong> принял устройство <strong>ТСКБМ-Н</strong> от сотрудника <strong>Петров П.П.</strong>
+                    </div>
+                </div>
+                <div class="recent-activity-item px-3">
+                    <div class="recent-activity-time">Вчера, 16:45</div>
+                    <div class="mt-1 small">
+                        <strong>Менеджер</strong> добавил новое устройство <strong>Радиостанция РВ-1.1М</strong>
+                    </div>
+                </div>
+                <div class="recent-activity-item px-3">
+                    <div class="recent-activity-time">Вчера, 14:20</div>
+                    <div class="mt-1 small">
+                        <strong>Администратор</strong> обновил информацию о сотруднике <strong>Козлова А.А.</strong>
+                    </div>
+                </div>
+                <div class="recent-activity-item px-3">
+                    <div class="recent-activity-time">Вчера, 11:05</div>
+                    <div class="mt-1 small">
+                        <strong>Оператор</strong> выдал устройство <strong>МПМЭ-128</strong> сотруднику <strong>Новиков В.М.</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Просроченные устройства -->
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center bg-danger text-white">
+                <h5 class="mb-0">Просроченные устройства</h5>
+                <span class="badge bg-light text-danger">5 устройств</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Устройство</th>
+                                <th>Сотрудник</th>
+                                <th>Срок возврата</th>
+                                <th>Просрочено</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Носитель КР</td>
+                                <td>Сидоров С.С.</td>
+                                <td>04.10.2023</td>
+                                <td>1 день</td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-telephone"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Радиостанция РВ-1.1М</td>
+                                <td>Козлова А.А.</td>
+                                <td>03.10.2023</td>
+                                <td>2 дня</td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-telephone"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>ТСКБМ-Н</td>
+                                <td>Петров П.П.</td>
+                                <td>01.10.2023</td>
+                                <td>4 дня</td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-telephone"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Радиостанция АК-9</td>
+                                <td>Иванов И.И.</td>
+                                <td>30.09.2023</td>
+                                <td>5 дней</td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-telephone"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>МПМЭ-128</td>
+                                <td>Новиков В.М.</td>
+                                <td>28.09.2023</td>
+                                <td>7 дней</td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-telephone"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="p-3 border-top bg-white mt-3">
+    <div class="d-flex justify-content-between small">
+        <div>© 2023 </div>
+        <div>
+            <span class="me-3"></span>
+            <span>Связаться с нами</span>
+        </div>
+    </div>
+</footer>
+{% endblock %}

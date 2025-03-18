@@ -1,0 +1,209 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Учет радиостанций - Возврат устройства{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Возврат устройства</h1>
+</div>
+
+<!-- Форма возврата устройства -->
+<div class="card">
+    <div class="card-body">
+        <form>
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h4>1. Выберите устройство для возврата</h4>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Способ выбора устройства</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="deviceSelectMethod" id="scanMethod" checked onclick="toggleDeviceSelectionMethod('scan')">
+                            <label class="form-check-label" for="scanMethod">
+                                Сканировать QR/штрих-код
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="deviceSelectMethod" id="manualMethod" onclick="toggleDeviceSelectionMethod('manual')">
+                            <label class="form-check-label" for="manualMethod">
+                                Ввести серийный номер вручную
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="deviceSelectMethod" id="listMethod" onclick="toggleDeviceSelectionMethod('list')">
+                            <label class="form-check-label" for="listMethod">
+                                Выбрать из списка выданных устройств
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Область сканирования QR/штрих-кода -->
+                    <div id="scanArea" class="scan-area">
+                        <div class="scan-icon">
+                            <i class="bi bi-upc-scan"></i>
+                        </div>
+                        <p class="mb-1">Наведите сканер на QR/штрих-код устройства</p>
+                        <p class="text-muted small">или нажмите здесь, чтобы использовать камеру устройства</p>
+                    </div>
+                    
+                    <!-- Поле для ручного ввода серийного номера -->
+                    <div id="manualInput" class="mb-3" style="display: none;">
+                        <label for="serialNumber" class="form-label">Серийный номер устройства</label>
+                        <input type="text" class="form-control" id="serialNumber" placeholder="Введите серийный номер">
+                    </div>
+                    
+                    <!-- Список выданных устройств -->
+                    <div id="issuedDevicesList" style="display: none;">
+                        <div class="mb-3">
+                            <input type="text" class="form-control" placeholder="Поиск по названию, серийному номеру или сотруднику">
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Устройство</th>
+                                        <th scope="col">Серийный номер</th>
+                                        <th scope="col">Выдано</th>
+                                        <th scope="col">Сотрудник</th>
+                                        <th scope="col">Срок возврата</th>
+                                        <th scope="col"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Радиостанция АК-9</td>
+                                        <td>SN123456</td>
+                                        <td>01.10.2023 12:00</td>
+                                        <td>Иванов И.И.</td>
+                                        <td>05.10.2023 12:00</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-primary">Выбрать</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>ТСКБМ-Н</td>
+                                        <td>SN789012</td>
+                                        <td>02.10.2023 09:30</td>
+                                        <td>Петров П.П.</td>
+                                        <td>06.10.2023 09:30</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-primary">Выбрать</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Носитель КР</td>
+                                        <td>SN567890</td>
+                                        <td>03.10.2023 14:15</td>
+                                        <td>Сидоров С.С.</td>
+                                        <td>04.10.2023 14:15</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-primary">Выбрать</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Информация о выбранном устройстве и сотруднике -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="alert alert-primary">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 class="device-info">Информация об устройстве</h5>
+                                <p><strong>Название:</strong> Радиостанция АК-9</p>
+                                <p><strong>Тип:</strong> Радиостанция</p>
+                                <p><strong>Серийный номер:</strong> SN123456</p>
+                                <p><strong>Выдано:</strong> 01.10.2023 12:00</p>
+                                <p><strong>Срок возврата:</strong> 05.10.2023 12:00</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="employee-info">Информация о сотруднике</h5>
+                                <p><strong>ФИО:</strong> Иванов Иван Иванович</p>
+                                <p><strong>Должность:</strong> Машинист</p>
+                                <p><strong>Подразделение:</strong> Локомотивное депо</p>
+                                <p><strong>Телефон:</strong> +7 999 123 45 67</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h4>2. Укажите состояние устройства</h4>
+                    <div class="mb-3">
+                        <label for="deviceStatus" class="form-label required-field">Состояние устройства</label>
+                        <select class="form-select" id="deviceStatus" required onchange="toggleFaultyReason()">
+                            <option value="">Выберите состояние</option>
+                            <option value="ok" selected>Исправно</option>
+                            <option value="faulty">Неисправно</option>
+                        </select>
+                    </div>
+                    
+                    <div id="faultyReasonBlock" class="mb-3" style="display: none;">
+                        <label for="faultyReason" class="form-label required-field">Причина неисправности</label>
+                        <textarea class="form-control" id="faultyReason" rows="3" placeholder="Опишите причину неисправности"></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="returnComment" class="form-label">Комментарий</label>
+                        <textarea class="form-control" id="returnComment" rows="3" placeholder="Дополнительная информация о возврате устройства"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> Поля, отмеченные <span class="text-danger">*</span>, обязательны для заполнения.
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <button type="button" class="btn btn-secondary">Отмена</button>
+                <button type="submit" class="btn btn-primary">Принять устройство</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    // Функция для переключения способа выбора устройства
+    function toggleDeviceSelectionMethod(method) {
+        // Скрываем все блоки выбора
+        document.getElementById('scanArea').style.display = 'none';
+        document.getElementById('manualInput').style.display = 'none';
+        document.getElementById('issuedDevicesList').style.display = 'none';
+        
+        // Показываем выбранный блок
+        if (method === 'scan') {
+            document.getElementById('scanArea').style.display = 'block';
+        } else if (method === 'manual') {
+            document.getElementById('manualInput').style.display = 'block';
+        } else if (method === 'list') {
+            document.getElementById('issuedDevicesList').style.display = 'block';
+        }
+    }
+    
+    // Функция для отображения/скрытия блока причины неисправности
+    function toggleFaultyReason() {
+        const deviceStatus = document.getElementById('deviceStatus').value;
+        const faultyReasonBlock = document.getElementById('faultyReasonBlock');
+        
+        if (deviceStatus === 'faulty') {
+            faultyReasonBlock.style.display = 'block';
+        } else {
+            faultyReasonBlock.style.display = 'none';
+        }
+    }
+</script>
+{% endblock %} 

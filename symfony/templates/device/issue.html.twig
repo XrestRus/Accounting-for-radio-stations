@@ -1,0 +1,224 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Учет радиостанций - Выдача устройства{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Выдача устройства</h1>
+</div>
+
+<!-- Форма выдачи устройства -->
+<div class="card">
+    <div class="card-body">
+        <form>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h4>1. Выберите сотрудника</h4>
+                    <div class="mb-3">
+                        <label for="employeeSelect" class="form-label required-field">Сотрудник</label>
+                        <select class="form-select" id="employeeSelect" required>
+                            <option value="">Выберите сотрудника</option>
+                            <option value="1">Иванов Иван Иванович (Машинист)</option>
+                            <option value="2">Петров Петр Петрович (Дежурный по депо)</option>
+                            <option value="3">Сидоров Сергей Сергеевич (Инженер)</option>
+                            <option value="4">Козлова Анна Александровна (Диспетчер)</option>
+                            <option value="5">Новиков Владимир Михайлович (Охранник)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h4>2. Укажите срок возврата</h4>
+                    <div class="mb-3">
+                        <label for="returnDate" class="form-label">Дата возврата</label>
+                        <input type="date" class="form-control" id="returnDate">
+                    </div>
+                    <div class="mb-3">
+                        <label for="returnTime" class="form-label">Время возврата</label>
+                        <input type="time" class="form-control" id="returnTime">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Быстрый выбор срока</label>
+                        <div>
+                            <button type="button" class="btn btn-outline-secondary quick-select-btn" onclick="setReturnPeriod(1)">1 сутки</button>
+                            <button type="button" class="btn btn-outline-secondary quick-select-btn" onclick="setReturnPeriod(7)">7 суток</button>
+                            <button type="button" class="btn btn-outline-secondary quick-select-btn" onclick="setReturnPeriod(30)">1 месяц</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h4>3. Выберите устройство</h4>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Способ выбора устройства</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="deviceSelectMethod" id="scanMethod" checked onclick="toggleDeviceSelectionMethod('scan')">
+                            <label class="form-check-label" for="scanMethod">
+                                Сканировать QR/штрих-код
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="deviceSelectMethod" id="manualMethod" onclick="toggleDeviceSelectionMethod('manual')">
+                            <label class="form-check-label" for="manualMethod">
+                                Ввести серийный номер вручную
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="deviceSelectMethod" id="listMethod" onclick="toggleDeviceSelectionMethod('list')">
+                            <label class="form-check-label" for="listMethod">
+                                Выбрать из списка
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Область сканирования QR/штрих-кода -->
+                    <div id="scanArea" class="scan-area">
+                        <div class="scan-icon">
+                            <i class="bi bi-upc-scan"></i>
+                        </div>
+                        <p class="mb-1">Наведите сканер на QR/штрих-код устройства</p>
+                        <p class="text-muted small">или нажмите здесь, чтобы использовать камеру устройства</p>
+                    </div>
+                    
+                    <!-- Поле для ручного ввода серийного номера -->
+                    <div id="manualInput" class="mb-3" style="display: none;">
+                        <label for="serialNumber" class="form-label">Серийный номер устройства</label>
+                        <input type="text" class="form-control" id="serialNumber" placeholder="Введите серийный номер">
+                    </div>
+                    
+                    <!-- Список доступных устройств -->
+                    <div id="devicesList" style="display: none;">
+                        <div class="mb-3">
+                            <input type="text" class="form-control" placeholder="Поиск по названию или серийному номеру">
+                        </div>
+                        
+                        <div class="device-card selected">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="mb-1">Радиостанция АК-9</h5>
+                                    <span class="badge bg-secondary device-type-badge">Радиостанция</span>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="deviceRadio" checked>
+                                </div>
+                            </div>
+                            <div class="text-muted small mt-2">
+                                Серийный номер: SN123456
+                            </div>
+                        </div>
+                        
+                        <div class="device-card">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="mb-1">МПМЭ-128</h5>
+                                    <span class="badge bg-secondary device-type-badge">Устройство безопасности</span>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="deviceRadio">
+                                </div>
+                            </div>
+                            <div class="text-muted small mt-2">
+                                Серийный номер: SN901234
+                            </div>
+                        </div>
+                        
+                        <div class="device-card">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="mb-1">Носитель КР</h5>
+                                    <span class="badge bg-secondary device-type-badge">Носитель информации</span>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="deviceRadio">
+                                </div>
+                            </div>
+                            <div class="text-muted small mt-2">
+                                Серийный номер: SN567890
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Информация о выбранном устройстве -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="alert alert-primary">
+                        <h5><i class="bi bi-info-circle"></i> Информация о выбранном устройстве</h5>
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <p><strong>Название:</strong> Радиостанция АК-9</p>
+                                <p><strong>Тип:</strong> Радиостанция</p>
+                                <p><strong>Серийный номер:</strong> SN123456</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Статус:</strong> <span class="badge bg-success">Доступно</span></p>
+                                <p><strong>QR/Штрих-код:</strong> QR123</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> Поля, отмеченные <span class="text-danger">*</span>, обязательны для заполнения.
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <button type="button" class="btn btn-secondary">Отмена</button>
+                <button type="submit" class="btn btn-primary">Выдать устройство</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    // Функция для переключения способа выбора устройства
+    function toggleDeviceSelectionMethod(method) {
+        // Скрываем все блоки выбора
+        document.getElementById('scanArea').style.display = 'none';
+        document.getElementById('manualInput').style.display = 'none';
+        document.getElementById('devicesList').style.display = 'none';
+        
+        // Показываем выбранный блок
+        if (method === 'scan') {
+            document.getElementById('scanArea').style.display = 'block';
+        } else if (method === 'manual') {
+            document.getElementById('manualInput').style.display = 'block';
+        } else if (method === 'list') {
+            document.getElementById('devicesList').style.display = 'block';
+        }
+    }
+    
+    // Функция для установки срока возврата
+    function setReturnPeriod(days) {
+        // Получаем текущую дату и время
+        const now = new Date();
+        
+        // Добавляем указанное количество дней
+        const returnDate = new Date(now);
+        returnDate.setDate(returnDate.getDate() + days);
+        
+        // Форматируем дату для поля ввода (YYYY-MM-DD)
+        const formattedDate = returnDate.toISOString().split('T')[0];
+        
+        // Форматируем время для поля ввода (HH:MM)
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const formattedTime = `${hours}:${minutes}`;
+        
+        // Устанавливаем значения в поля формы
+        document.getElementById('returnDate').value = formattedDate;
+        document.getElementById('returnTime').value = formattedTime;
+    }
+</script>
+{% endblock %} 

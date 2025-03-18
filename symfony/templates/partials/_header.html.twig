@@ -1,0 +1,21 @@
+<!-- Верхняя навигационная панель -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+        <div class="d-flex align-items-center">
+            <div class="app-title">Учет радиостанций</div>
+        </div>
+        <ul class="navbar-nav ms-auto">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-person-circle"></i> Администратор
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#">Профиль</a></li>
+                    <li><a class="dropdown-item" href="{{ path('app_user') }}">Управление пользователями</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{{ path('app_logout') }}">Выход</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav> 

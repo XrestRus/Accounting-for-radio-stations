@@ -1,0 +1,47 @@
+<!-- Боковое меню -->
+<div class="sidebar">
+    <div class="d-flex flex-column p-3">
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item">
+                <a href="{{ path('app_dashboard') }}" class="nav-link {{ app.request.get('_route') == 'app_dashboard' ? 'active' : '' }}">
+                    <i class="bi bi-speedometer2"></i> Главная
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('app_device_issue') }}" class="nav-link {{ app.request.get('_route') == 'app_device_issue' ? 'active' : '' }}">
+                    <i class="bi bi-box-arrow-right"></i> Выдача устройств
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('app_device_return') }}" class="nav-link {{ app.request.get('_route') == 'app_device_return' ? 'active' : '' }}">
+                    <i class="bi bi-box-arrow-in-left"></i> Возврат устройств
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('app_device') }}" class="nav-link {{ app.request.get('_route') == 'app_device' ? 'active' : '' }}">
+                    <i class="bi bi-device-hdd"></i> Управление устройствами
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('app_journal') }}" class="nav-link {{ app.request.get('_route') == 'app_journal' ? 'active' : '' }}">
+                    <i class="bi bi-journal-text"></i> Журнал учета
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('app_employee') }}" class="nav-link {{ app.request.get('_route') == 'app_employee' ? 'active' : '' }}">
+                    <i class="bi bi-people"></i> Сотрудники
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('app_settings') }}" class="nav-link {{ app.request.get('_route') == 'app_settings' ? 'active' : '' }}">
+                    <i class="bi bi-gear"></i> Настройки
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('app_help') }}" class="nav-link {{ app.request.get('_route') == 'app_help' ? 'active' : '' }}">
+                    <i class="bi bi-question-circle"></i> Справка
+                </a>
+            </li>
+        </ul>
+    </div>
+</div> 
