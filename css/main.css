@@ -1,43 +1,124 @@
 /* Combined CSS styles from all HTML files */
 /* Generated on Mon Mar 17 17:38:22 +07 2025 */
 
+/* RZD Style CSS */
+
+:root {
+    --rzd-primary: #E21A1A;
+    --rzd-secondary: #1F3A5F;
+    --rzd-light-gray: #F5F5F5;
+    --rzd-gray: #E5E5E5;
+    --rzd-dark-gray: #666666;
+    --rzd-text: #333333;
+    --rzd-success: #198754;
+    --rzd-warning: #FFC107;
+    --rzd-danger: #DC3545;
+}
+
 /* General Styles */
 body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    font-family: Arial, sans-serif;
+    color: var(--rzd-text);
+    background-color: #FFFFFF;
+    margin: 0;
+    padding: 0;
 }
 
 /* Navbar Styles */
+.navbar {
+    background-color: #333333 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    height: 56px;
+    padding: 0;
+    border-bottom: 3px solid var(--rzd-primary);
+}
+
+/* RZD Logo and Bonus - Replaced with app title */
+.app-title {
+    font-weight: bold;
+    color: white;
+    font-size: 18px;
+    letter-spacing: 0.5px;
+    margin-left: 15px;
+}
+
 .navbar-brand {
     font-weight: bold;
+    color: white !important;
+    padding-left: 15px;
+    font-size: 18px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-nav .nav-link {
+    color: white !important;
+    font-size: 14px;
+    padding: 18px 10px;
+    position: relative;
+}
+
+.navbar-nav .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: var(--rzd-primary);
+}
+
+.dropdown-menu {
+    border-radius: 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 0;
+    margin-top: 3px;
+}
+
+.dropdown-item {
+    padding: 8px 15px;
+    font-size: 14px;
+}
+
+.dropdown-item:hover {
+    background-color: var(--rzd-light-gray);
 }
 
 /* Sidebar Styles */
 .sidebar {
-    width: 250px;
+    width: 240px;
     min-height: calc(100vh - 56px);
-    background-color: #f8f9fa;
-    border-right: 1px solid #dee2e6;
+    background-color: white;
+    border-right: 1px solid var(--rzd-gray);
 }
 
-.sidebar .nav-link {
-    color: #495057;
-    padding: 0.8rem 1rem;
+.sidebar .nav-pills .nav-link {
+    color: var(--rzd-text);
+    padding: 12px 15px;
     border-radius: 0;
+    font-size: 14px;
+    border-left: 3px solid transparent;
 }
 
-.sidebar .nav-link:hover {
-    background-color: #e9ecef;
+.sidebar .nav-pills .nav-link:hover {
+    background-color: var(--rzd-light-gray);
+    border-left: 3px solid var(--rzd-gray);
 }
 
-.sidebar .nav-link.active {
-    color: #fff;
-    background-color: #0d6efd;
+.sidebar .nav-pills .nav-link.active {
+    color: var(--rzd-text);
+    background-color: var(--rzd-light-gray);
+    border-left: 3px solid var(--rzd-primary);
+    font-weight: 500;
 }
 
-.sidebar .nav-link i {
-    margin-right: 0.5rem;
+.sidebar .nav-pills .nav-link i {
+    margin-right: 10px;
+    font-size: 16px;
 }
 
 /* Content Styles */
@@ -45,20 +126,194 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
+    background-color: var(--rzd-light-gray);
 }
 
 .main-content {
     flex: 1;
-    padding: 1.5rem;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: var(--rzd-secondary);
+}
+
+.text-muted {
+    color: var(--rzd-dark-gray) !important;
+    font-size: 13px;
+}
+
+/* Card Styles */
+.card {
+    border: none;
+    border-radius: 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.card-header {
+    background-color: white;
+    border-bottom: 1px solid var(--rzd-gray);
+    padding: 15px;
+    font-weight: 600;
+}
+
+.card-body {
+    padding: 15px;
+}
+
+/* Stat Card Styles */
+.stat-card {
+    height: 100%;
+    transition: transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+}
+
+.stat-card-primary {
+    border-top: 3px solid var(--rzd-primary);
+}
+
+.stat-card-success {
+    border-top: 3px solid var(--rzd-success);
+}
+
+.stat-card-warning {
+    border-top: 3px solid var(--rzd-warning);
+}
+
+.stat-card-danger {
+    border-top: 3px solid var(--rzd-danger);
+}
+
+.stat-number {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.stat-icon {
+    font-size: 30px;
+    opacity: 0.7;
+}
+
+.stat-icon i {
+    color: var(--rzd-secondary);
+}
+
+/* Dashboard Cards */
+.dashboard-card {
+    height: 100%;
+    transition: transform 0.2s;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-3px);
+}
+
+.dashboard-icon {
+    font-size: 36px;
+    margin-bottom: 15px;
+}
+
+/* Button Styles */
+.btn {
+    border-radius: 0;
+    font-size: 14px;
+    padding: 8px 15px;
+}
+
+.btn-primary {
+    background-color: var(--rzd-primary);
+    border-color: var(--rzd-primary);
+}
+
+.btn-primary:hover {
+    background-color: #c01616;
+    border-color: #c01616;
+}
+
+.btn-success {
+    background-color: var(--rzd-success);
+    border-color: var(--rzd-success);
+}
+
+.btn-info {
+    background-color: var(--rzd-secondary);
+    border-color: var(--rzd-secondary);
+}
+
+.btn-warning {
+    background-color: var(--rzd-warning);
+    border-color: var(--rzd-warning);
+}
+
+.btn-outline-secondary {
+    color: var(--rzd-dark-gray);
+    border-color: var(--rzd-gray);
+}
+
+.btn-outline-secondary:hover {
+    background-color: var(--rzd-light-gray);
+    color: var(--rzd-text);
+}
+
+.btn-sm {
+    padding: 4px 8px;
+    font-size: 12px;
+}
+
+/* Recent Activity */
+.recent-activity-item {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--rzd-gray);
+}
+
+.recent-activity-item:last-child {
+    border-bottom: none;
+}
+
+.recent-activity-time {
+    color: var(--rzd-dark-gray);
+    font-size: 12px;
 }
 
 /* Table Styles */
-.table-responsive {
-    overflow-x: auto;
+.table {
+    margin-bottom: 0;
 }
 
-.action-buttons {
-    white-space: nowrap;
+.table th {
+    font-weight: 600;
+    background-color: var(--rzd-light-gray);
+    border-top: none;
+    padding: 10px;
+    font-size: 13px;
+}
+
+.table td {
+    padding: 10px;
+    vertical-align: middle;
+    font-size: 13px;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Overdue Card Header */
+.card-header.bg-danger {
+    background-color: var(--rzd-primary) !important;
+}
+
+.badge.bg-light.text-danger {
+    background-color: white !important;
+    color: var(--rzd-primary) !important;
 }
 
 /* Status Styles */
@@ -344,4 +599,10 @@ body {
 /* Password Toggle */
 .password-toggle {
     cursor: pointer;
+}
+
+/* Footer Styles */
+footer {
+    color: var(--rzd-dark-gray);
+    font-size: 13px;
 }
