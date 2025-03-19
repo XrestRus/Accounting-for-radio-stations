@@ -34,6 +34,16 @@ services:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
+      
+  adminer:
+    image: adminer:latest
+    ports:
+      - "8181:8080"
+    depends_on:
+      - database
+    environment:
+      ADMINER_DEFAULT_SERVER: database
+      ADMINER_DESIGN: pepa-linha
 
 volumes:
   db_data: 
