@@ -21,6 +21,25 @@ Accounting for radio stations
   ![](https://github.com/XrestRus/Accounting-for-radio-stations/blob/master/context/4.code.png)
 </details> 
 
+<details >
+    <summary>Список устройств</summary>
+
+![](https://github.com/XrestRus/Accounting-for-radio-stations/blob/master/context/5.list-device.png)
+</details> 
+
+<details >
+    <summary>Форма добавление устройства</summary>
+
+![](https://github.com/XrestRus/Accounting-for-radio-stations/blob/master/context/7.add-device.png)
+</details> 
+
+<details >
+    <summary>Форма редактирование устройства</summary>
+
+![](https://github.com/XrestRus/Accounting-for-radio-stations/blob/master/context/6.edit-device.png)
+</details> 
+
+
 # Лог эксперимента
 
 - день 1 (1ч): подготовка ТЗ через deepseek
@@ -28,6 +47,7 @@ Accounting for radio stations
 - день 3 (1.5ч): приведение html-кода к чистовому варианту, с едиными стилями, ссылками и открывающимися модалками с репозиторием в github, с помощью cursor и модели sonnet 3.7 и 3.5
 - день 4 (1.2ч): сделали дизайн в стиле РЖД, подключили symfony, нарезали верстку на шаблоны и контроллеры
 - день 5 (1.1ч): написали план спринта, установили докер, локально окружение разработки
+- день 6 (1.2ч): первичные модели в БД, страница списка устройств и формы добавления и редактирования устройств
 
 # Запуск проекта с использованием Docker
 

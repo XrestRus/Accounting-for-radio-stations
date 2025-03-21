@@ -1,0 +1,118 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Учет радиостанций - {{ pageTitle }}{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>{{ pageTitle }}</h1>
+    <a href="{{ path('app_device') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Вернуться к списку
+    </a>
+</div>
+
+<!-- Форма добавления/редактирования устройства -->
+<div class="card">
+    <div class="card-body">
+        {{ form_start(form) }}
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h4>Основная информация</h4>
+                    <div class="mb-3">
+                        {{ form_label(form.name, null, {'label_attr': {'class': 'form-label required-field'}}) }}
+                        {{ form_widget(form.name) }}
+                        {{ form_errors(form.name) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.type, null, {'label_attr': {'class': 'form-label required-field'}}) }}
+                        {{ form_widget(form.type) }}
+                        {{ form_errors(form.type) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.serialNumber, null, {'label_attr': {'class': 'form-label required-field'}}) }}
+                        {{ form_widget(form.serialNumber) }}
+                        {{ form_errors(form.serialNumber) }}
+                        <div class="form-text">Уникальный серийный номер устройства</div>
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.qrCode, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.qrCode) }}
+                        {{ form_errors(form.qrCode) }}
+                        <div class="form-text">Код для быстрого сканирования (если имеется)</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h4>Статус и принадлежность</h4>
+                    <div class="mb-3">
+                        {{ form_label(form.status, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.status) }}
+                        {{ form_errors(form.status) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.depot, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.depot) }}
+                        {{ form_errors(form.depot) }}
+                    </div>
+                    <div class="mb-3 status-dependent" id="repair-fields">
+                        {{ form_label(form.repairComment, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.repairComment) }}
+                        {{ form_errors(form.repairComment) }}
+                    </div>
+                    <div class="mb-3 status-dependent" id="writeoff-fields">
+                        {{ form_label(form.writeOffComment, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.writeOffComment) }}
+                        {{ form_errors(form.writeOffComment) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> Поля, отмеченные <span class="text-danger">*</span>, обязательны для заполнения.
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{{ path('app_device') }}" class="btn btn-secondary">Отмена</a>
+                <div>
+                    <button type="reset" class="btn btn-outline-secondary me-2">Сбросить</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const statusSelect = document.querySelector('#{{ form.status.vars.id }}');
+        const repairFields = document.querySelector('#repair-fields');
+        const writeoffFields = document.querySelector('#writeoff-fields');
+        
+        function updateFields() {
+            const selectedStatus = statusSelect.value;
+            
+            // Hide all status-dependent fields by default
+            repairFields.style.display = 'none';
+            writeoffFields.style.display = 'none';
+            
+            // Show relevant fields based on status
+            if (selectedStatus === 'in_repair') {
+                repairFields.style.display = 'block';
+            } else if (selectedStatus === 'written_off') {
+                writeoffFields.style.display = 'block';
+            }
+        }
+        
+        // Initial setup
+        updateFields();
+        
+        // Update when status changes
+        statusSelect.addEventListener('change', updateFields);
+    });
+</script>
+{% endblock %} 

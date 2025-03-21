@@ -32,7 +32,7 @@ class Device
     #[ORM\Column(type: 'string', length: 100, nullable: true, options: ['comment' => 'QR-код или штрих-код устройства'])]
     private ?string $qrCode = null;
 
-    #[ORM\Column(type: 'string', length: 20, options: ['comment' => 'Текущий статус устройства (доступно, выдано, неисправно, в ремонте, списано)'])]
+    #[ORM\Column(type: 'string', length: 20, enumType: StatusEnum::class, options: ['comment' => 'Текущий статус устройства (доступно, выдано, неисправно, в ремонте, списано)'])]
     private StatusEnum $status = StatusEnum::AVAILABLE;
 
     #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Комментарий о причине списания устройства'])]

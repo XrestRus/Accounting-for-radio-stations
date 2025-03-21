@@ -13,40 +13,54 @@
 <!-- Фильтры и поиск -->
 <div class="card mb-4">
     <div class="card-body">
-        <div class="row g-3">
-            <div class="col-md-4">
-                <label for="searchInput" class="form-label">Поиск</label>
-                <input type="text" class="form-control" id="searchInput" placeholder="Название, серийный номер...">
+        <form method="get" action="{{ path('app_device') }}">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label for="search" class="form-label">Поиск</label>
+                    <input type="text" class="form-control" id="search" name="search" value="{{ search }}" placeholder="Название, серийный номер...">
+                </div>
+                <div class="col-md-3">
+                    <label for="type" class="form-label">Тип устройства</label>
+                    <select class="form-select" id="type" name="type">
+                        <option value="">Все типы</option>
+                        <option value="radio" {% if type == 'radio' %}selected{% endif %}>Радиостанция</option>
+                        <option value="carrier" {% if type == 'carrier' %}selected{% endif %}>Носитель информации</option>
+                        <option value="security" {% if type == 'security' %}selected{% endif %}>Устройство безопасности</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="status" class="form-label">Статус</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value="">Все статусы</option>
+                        <option value="available" {% if status == 'available' %}selected{% endif %}>Доступно</option>
+                        <option value="issued" {% if status == 'issued' %}selected{% endif %}>Выдано</option>
+                        <option value="faulty" {% if status == 'faulty' %}selected{% endif %}>Неисправно</option>
+                        <option value="in_repair" {% if status == 'in_repair' %}selected{% endif %}>В ремонте</option>
+                        <option value="written_off" {% if status == 'written_off' %}selected{% endif %}>Списано</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">Применить</button>
+                </div>
             </div>
-            <div class="col-md-3">
-                <label for="typeFilter" class="form-label">Тип устройства</label>
-                <select class="form-select" id="typeFilter">
-                    <option value="">Все типы</option>
-                    <option value="radio">Радиостанция</option>
-                    <option value="carrier">Носитель информации</option>
-                    <option value="security">Устройство безопасности</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <label for="statusFilter" class="form-label">Статус</label>
-                <select class="form-select" id="statusFilter">
-                    <option value="">Все статусы</option>
-                    <option value="available">Доступно</option>
-                    <option value="issued">Выдано</option>
-                    <option value="faulty">Неисправно</option>
-                    <option value="written-off">Списано</option>
-                </select>
-            </div>
-            <div class="col-md-2 d-flex align-items-end">
-                <button type="button" class="btn btn-primary w-100">Применить</button>
-            </div>
-        </div>
+        </form>
     </div>
 </div>
+
+<!-- Сообщения для пользователя -->
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endfor %}
 
 <!-- Таблица устройств -->
 <div class="card">
     <div class="card-body">
+        {% if devices|length > 0 %}
         <div class="table-responsive">
             <table class="table table-hover">
                 <thead>
@@ -57,129 +71,112 @@
                         <th scope="col">Серийный номер</th>
                         <th scope="col">QR/Штрих-код</th>
                         <th scope="col">Статус</th>
+                        <th scope="col">Депо</th>
                         <th scope="col">Дата создания</th>
                         <th scope="col">Действия</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {% for device in devices %}
                     <tr>
-                        <th scope="row">1</th>
-                        <td>Радиостанция АК-9</td>
-                        <td>Радиостанция</td>
-                        <td>SN123456</td>
-                        <td><i class="bi bi-qr-code"></i> QR-123456</td>
-                        <td><span class="badge bg-success">Доступно</span></td>
-                        <td>01.10.2023</td>
+                        <th scope="row">{{ device.id }}</th>
+                        <td>{{ device.name }}</td>
+                        <td>{{ device.typeFormatted }}</td>
+                        <td>{{ device.serialNumber }}</td>
+                        <td>{% if device.qrCode %}<i class="bi bi-qr-code"></i> {{ device.qrCode }}{% else %}—{% endif %}</td>
+                        <td>
+                            <span class="badge {{ device.statusBadgeClass }}">{{ device.statusFormatted }}</span>
+                        </td>
+                        <td>{{ device.depotName ?? '—' }}</td>
+                        <td>{{ device.createdAt|date('d.m.Y') }}</td>
                         <td class="action-buttons">
-                            <button type="button" class="btn btn-sm btn-outline-primary" title="Подробнее">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                            <a href="{{ path('app_device_edit', {'id': 1}) }}" class="btn btn-sm btn-outline-secondary" title="Редактировать">
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Статус
+                                </button>
+                                <ul class="dropdown-menu">
+                                    {% if device.status.value != 'available' %}
+                                    <li>
+                                        <form method="post" action="{{ path('app_device_change_status', {'id': device.id, 'status': 'available'}) }}">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('status' ~ device.id) }}">
+                                            <button type="submit" class="dropdown-item">Доступно</button>
+                                        </form>
+                                    </li>
+                                    {% endif %}
+                                    
+                                    {% if device.status.value != 'faulty' %}
+                                    <li>
+                                        <form method="post" action="{{ path('app_device_change_status', {'id': device.id, 'status': 'faulty'}) }}">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('status' ~ device.id) }}">
+                                            <button type="submit" class="dropdown-item">Неисправно</button>
+                                        </form>
+                                    </li>
+                                    {% endif %}
+                                    
+                                    {% if device.status.value != 'in_repair' %}
+                                    <li>
+                                        <form method="post" action="{{ path('app_device_change_status', {'id': device.id, 'status': 'in_repair'}) }}">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('status' ~ device.id) }}">
+                                            <button type="submit" class="dropdown-item">В ремонте</button>
+                                        </form>
+                                    </li>
+                                    {% endif %}
+                                    
+                                    {% if device.status.value != 'written_off' %}
+                                    <li>
+                                        <form method="post" action="{{ path('app_device_change_status', {'id': device.id, 'status': 'written_off'}) }}">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('status' ~ device.id) }}">
+                                            <button type="submit" class="dropdown-item">Списано</button>
+                                        </form>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                            
+                            <a href="{{ path('app_device_edit', {'id': device.id}) }}" class="btn btn-sm btn-outline-secondary" title="Редактировать">
                                 <i class="bi bi-pencil"></i>
                             </a>
-                            <button type="button" class="btn btn-sm btn-outline-danger" title="Удалить">
+                            
+                            <button type="button" class="btn btn-sm btn-outline-danger" title="Удалить" 
+                                    data-bs-toggle="modal" data-bs-target="#deleteModal{{ device.id }}">
                                 <i class="bi bi-trash"></i>
                             </button>
+                            
+                            <!-- Модальное окно подтверждения удаления -->
+                            <div class="modal fade" id="deleteModal{{ device.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ device.id }}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteModalLabel{{ device.id }}">Подтверждение удаления</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Вы уверены, что хотите удалить устройство "{{ device.name }}" ({{ device.serialNumber }})?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                            <form method="post" action="{{ path('app_device_delete', {'id': device.id}) }}">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ device.id) }}">
+                                                <button type="submit" class="btn btn-danger">Удалить</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </td>
                     </tr>
-                    <tr>
-                        <th scope="row">2</th>
-                        <td>Носитель КР</td>
-                        <td>Носитель информации</td>
-                        <td>SN789012</td>
-                        <td><i class="bi bi-qr-code"></i> QR-789012</td>
-                        <td><span class="badge bg-warning text-dark">Выдано</span></td>
-                        <td>01.10.2023</td>
-                        <td class="action-buttons">
-                            <button type="button" class="btn btn-sm btn-outline-primary" title="Подробнее">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                            <a href="{{ path('app_device_edit', {'id': 2}) }}" class="btn btn-sm btn-outline-secondary" title="Редактировать">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <button type="button" class="btn btn-sm btn-outline-danger" title="Удалить">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row">3</th>
-                        <td>Радиостанция РВ-1.1М</td>
-                        <td>Радиостанция</td>
-                        <td>SN345678</td>
-                        <td><i class="bi bi-qr-code"></i> QR-345678</td>
-                        <td><span class="badge bg-warning text-dark">Выдано</span></td>
-                        <td>01.10.2023</td>
-                        <td class="action-buttons">
-                            <button type="button" class="btn btn-sm btn-outline-primary" title="Подробнее">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                            <a href="{{ path('app_device_edit', {'id': 3}) }}" class="btn btn-sm btn-outline-secondary" title="Редактировать">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <button type="button" class="btn btn-sm btn-outline-danger" title="Удалить">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row">4</th>
-                        <td>ТСКБМ-Н</td>
-                        <td>Устройство безопасности</td>
-                        <td>SN901234</td>
-                        <td><i class="bi bi-qr-code"></i> QR-901234</td>
-                        <td><span class="badge bg-success">Доступно</span></td>
-                        <td>01.10.2023</td>
-                        <td class="action-buttons">
-                            <button type="button" class="btn btn-sm btn-outline-primary" title="Подробнее">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                            <a href="{{ path('app_device_edit', {'id': 4}) }}" class="btn btn-sm btn-outline-secondary" title="Редактировать">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <button type="button" class="btn btn-sm btn-outline-danger" title="Удалить">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row">5</th>
-                        <td>МПМЭ-128</td>
-                        <td>Устройство безопасности</td>
-                        <td>SN567890</td>
-                        <td><i class="bi bi-qr-code"></i> QR-567890</td>
-                        <td><span class="badge bg-warning text-dark">Выдано</span></td>
-                        <td>01.10.2023</td>
-                        <td class="action-buttons">
-                            <button type="button" class="btn btn-sm btn-outline-primary" title="Подробнее">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                            <a href="{{ path('app_device_edit', {'id': 5}) }}" class="btn btn-sm btn-outline-secondary" title="Редактировать">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <button type="button" class="btn btn-sm btn-outline-danger" title="Удалить">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
         
-        <!-- Пагинация -->
-        <nav aria-label="Page navigation" class="mt-4">
-            <ul class="pagination justify-content-center">
-                <li class="page-item disabled">
-                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Предыдущая</a>
-                </li>
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#">Следующая</a>
-                </li>
-            </ul>
-        </nav>
+        <!-- Здесь будет пагинация, если она понадобится -->
+        
+        {% else %}
+        <div class="alert alert-info">
+            Устройства не найдены. {% if search or type or status %}Попробуйте изменить параметры поиска.{% endif %}
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
