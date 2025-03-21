@@ -39,6 +39,11 @@ Accounting for radio stations
 ![](https://github.com/XrestRus/Accounting-for-radio-stations/blob/master/context/6.edit-device.png)
 </details> 
 
+<details >
+    <summary>Удаление устройства</summary>
+
+![](https://github.com/XrestRus/Accounting-for-radio-stations/blob/master/context/8.remove-device.png)
+</details> 
 
 # Лог эксперимента
 
