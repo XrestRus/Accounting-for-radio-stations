@@ -33,7 +33,7 @@ class Device
     private ?string $qrCode = null;
 
     #[ORM\Column(type: 'string', length: 20, options: ['comment' => 'Текущий статус устройства (доступно, выдано, неисправно, в ремонте, списано)'])]
-    private string $status = self::STATUS_AVAILABLE;
+    private StatusEnum $status = StatusEnum::AVAILABLE;
 
     #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Комментарий о причине списания устройства'])]
     private ?string $writeOffComment = null;
@@ -103,12 +103,12 @@ class Device
         return $this;
     }
 
-    public function getStatus(): string
+    public function getStatus(): StatusEnum
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): self
+    public function setStatus(StatusEnum $status): self
     {
         $this->status = $status;
         return $this;
