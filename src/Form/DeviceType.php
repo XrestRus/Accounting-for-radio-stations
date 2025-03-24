@@ -14,9 +14,19 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\Callback;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
 class DeviceType extends AbstractType
 {
+    private EntityManagerInterface $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -57,21 +67,10 @@ class DeviceType extends AbstractType
             ->add('qrCode', TextType::class, [
                 'label' => 'QR/Штрих-код',
                 'required' => false,
-                'attr' => ['class' => 'form-control']
-            ])
-            ->add('status', ChoiceType::class, [
-                'label' => 'Статус',
-                'choices' => [
-                    'Доступно' => StatusEnum::AVAILABLE,
-                    'Выдано' => StatusEnum::ISSUED,
-                    'Неисправно' => StatusEnum::FAULTY,
-                    'В ремонте' => StatusEnum::IN_REPAIR,
-                    'Списано' => StatusEnum::WRITTEN_OFF
+                'constraints' => [
+                    new Callback([$this, 'validateQrCodeUnique']),
                 ],
-                'choice_value' => function (?StatusEnum $status) {
-                    return $status ? $status->value : '';
-                },
-                'attr' => ['class' => 'form-select']
+                'attr' => ['class' => 'form-control']
             ])
             ->add('writeOffComment', TextareaType::class, [
                 'label' => 'Комментарий о причине списания',
@@ -104,5 +103,22 @@ class DeviceType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Device::class,
         ]);
+    }
+
+    public function validateQrCodeUnique($qrCode, ExecutionContextInterface $context)
+    {
+        if (empty($qrCode)) {
+            return;
+        }
+        
+        $device = $context->getObject()->getParent()->getData();
+        
+        $repository = $this->entityManager->getRepository(Device::class);
+        $existingDevice = $repository->findByQrCode($qrCode);
+        
+        if ($existingDevice && $existingDevice->getId() !== $device->getId()) {
+            $context->buildViolation('Устройство с таким QR-кодом уже существует.')
+                ->addViolation();
+        }
     }
 } 

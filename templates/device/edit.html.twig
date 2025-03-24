@@ -43,9 +43,21 @@
                 <div class="col-md-6">
                     <h4>Статус и принадлежность</h4>
                     <div class="mb-3">
-                        {{ form_label(form.status, null, {'label_attr': {'class': 'form-label'}}) }}
-                        {{ form_widget(form.status) }}
-                        {{ form_errors(form.status) }}
+                        <label class="form-label">Статус</label>
+                        <div>
+                            <span class="badge {{ device.status.value == 'available' ? 'bg-success' : 
+                                      device.status.value == 'issued' ? 'bg-warning text-dark' : 
+                                      device.status.value == 'faulty' ? 'bg-danger' : 
+                                      device.status.value == 'in_repair' ? 'bg-info' : 
+                                      'bg-secondary' }}">
+                                {{ device.status.value == 'available' ? 'Доступно' : 
+                                   device.status.value == 'issued' ? 'Выдано' : 
+                                   device.status.value == 'faulty' ? 'Неисправно' : 
+                                   device.status.value == 'in_repair' ? 'В ремонте' : 
+                                   'Списано' }}
+                            </span>
+                            <div class="form-text">Статус устройства нельзя изменить напрямую. Он меняется автоматически при операциях выдачи/возврата устройства.</div>
+                        </div>
                     </div>
                     <div class="mb-3">
                         {{ form_label(form.depot, null, {'label_attr': {'class': 'form-label'}}) }}
@@ -89,30 +101,21 @@
 {{ parent() }}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const statusSelect = document.querySelector('#{{ form.status.vars.id }}');
+        // Получаем текущий статус устройства
+        const currentStatus = '{{ device.status.value }}';
         const repairFields = document.querySelector('#repair-fields');
         const writeoffFields = document.querySelector('#writeoff-fields');
         
-        function updateFields() {
-            const selectedStatus = statusSelect.value;
-            
-            // Hide all status-dependent fields by default
-            repairFields.style.display = 'none';
-            writeoffFields.style.display = 'none';
-            
-            // Show relevant fields based on status
-            if (selectedStatus === 'in_repair') {
-                repairFields.style.display = 'block';
-            } else if (selectedStatus === 'written_off') {
-                writeoffFields.style.display = 'block';
-            }
+        // Скрываем все поля по умолчанию
+        repairFields.style.display = 'none';
+        writeoffFields.style.display = 'none';
+        
+        // Показываем соответствующие поля в зависимости от текущего статуса
+        if (currentStatus === 'in_repair') {
+            repairFields.style.display = 'block';
+        } else if (currentStatus === 'written_off') {
+            writeoffFields.style.display = 'block';
         }
-        
-        // Initial setup
-        updateFields();
-        
-        // Update when status changes
-        statusSelect.addEventListener('change', updateFields);
     });
 </script>
 {% endblock %} 

@@ -69,7 +69,11 @@ class DeviceController extends AbstractController
                 'statusBadgeClass' => $this->getStatusBadgeClass($device->getStatus()),
                 'depot' => $device->getDepot(),
                 'depotName' => $device->getDepot() ? $device->getDepot()->getName() : null,
-                'createdAt' => $device->getCreatedAt(),
+                'createdAt' => $device->getCreatedAt()->format('d.m.Y'),
+                'updatedAt' => $device->getUpdatedAt() ? $device->getUpdatedAt()->format('d.m.Y') : null,
+                'writeOffDate' => $device->getWriteOffDate() ? $device->getWriteOffDate()->format('d.m.Y') : null,
+                'writeOffComment' => $device->getWriteOffComment(),
+                'repairComment' => $device->getRepairComment(),
             ];
         }, $devices);
         
@@ -91,10 +95,12 @@ class DeviceController extends AbstractController
                 $this->addFlash('error', 'Устройство не найдено.');
                 return $this->redirectToRoute('app_device');
             }
+            $originalStatus = $device->getStatus(); // Запоминаем оригинальный статус
             $pageTitle = 'Редактирование устройства';
         } else {
             $device = new Device();
-            $device->setStatus(StatusEnum::AVAILABLE); // Установка статуса по умолчанию
+            $device->setStatus(StatusEnum::AVAILABLE); // Установка статуса по умолчанию для нового устройства
+            $originalStatus = StatusEnum::AVAILABLE;
             $pageTitle = 'Добавление устройства';
         }
         
@@ -102,6 +108,9 @@ class DeviceController extends AbstractController
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) {
+            // Возвращаем оригинальный статус - не даем его изменить через форму
+            $device->setStatus($originalStatus);
+            
             $this->entityManager->persist($device);
             $this->entityManager->flush();
             
@@ -126,9 +135,11 @@ class DeviceController extends AbstractController
         }
         
         if ($this->isCsrfTokenValid('delete' . $device->getId(), $request->request->get('_token'))) {
-            $this->entityManager->remove($device);
+            // Изменяем status на "Списано" вместо удаления
+            $device->setStatus(StatusEnum::WRITTEN_OFF);
+            $device->setWriteOffDate(new \DateTime());
             $this->entityManager->flush();
-            $this->addFlash('success', 'Устройство успешно удалено.');
+            $this->addFlash('success', 'Устройство успешно списано.');
         }
         
         return $this->redirectToRoute('app_device');
@@ -137,29 +148,8 @@ class DeviceController extends AbstractController
     #[Route('/devices/change-status/{id}/{status}', name: 'app_device_change_status', methods: ['POST'])]
     public function changeStatus(Request $request, int $id, string $status): Response
     {
-        $device = $this->deviceRepository->find($id);
-        if (!$device) {
-            $this->addFlash('error', 'Устройство не найдено.');
-            return $this->redirectToRoute('app_device');
-        }
-        
-        if ($this->isCsrfTokenValid('status' . $device->getId(), $request->request->get('_token'))) {
-            try {
-                $statusEnum = StatusEnum::from($status);
-                $device->setStatus($statusEnum);
-                
-                // If status is WRITTEN_OFF, set the write-off date
-                if ($statusEnum === StatusEnum::WRITTEN_OFF) {
-                    $device->setWriteOffDate(new \DateTime());
-                }
-                
-                $this->entityManager->flush();
-                $this->addFlash('success', 'Статус устройства успешно изменен.');
-            } catch (\ValueError $e) {
-                $this->addFlash('error', 'Неверное значение статуса.');
-            }
-        }
-        
+        // Отключаем этот метод, возвращая ошибку
+        $this->addFlash('error', 'Изменение статуса не поддерживается. Используйте соответствующие операции выдачи и возврата устройств.');
         return $this->redirectToRoute('app_device');
     }
 

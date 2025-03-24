@@ -29,7 +29,7 @@ class Device
     #[ORM\Column(type: 'string', length: 50, unique: true, options: ['comment' => 'Серийный номер устройства'])]
     private string $serialNumber;
 
-    #[ORM\Column(type: 'string', length: 100, nullable: true, options: ['comment' => 'QR-код или штрих-код устройства'])]
+    #[ORM\Column(type: 'string', length: 100, nullable: true, unique: true, options: ['comment' => 'QR-код или штрих-код устройства'])]
     private ?string $qrCode = null;
 
     #[ORM\Column(type: 'string', length: 20, enumType: StatusEnum::class, options: ['comment' => 'Текущий статус устройства (доступно, выдано, неисправно, в ремонте, списано)'])]

@@ -90,57 +90,21 @@
                         <td>{{ device.depotName ?? '—' }}</td>
                         <td>{{ device.createdAt|date('d.m.Y') }}</td>
                         <td class="action-buttons">
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Статус
-                                </button>
-                                <ul class="dropdown-menu">
-                                    {% if device.status.value != 'available' %}
-                                    <li>
-                                        <form method="post" action="{{ path('app_device_change_status', {'id': device.id, 'status': 'available'}) }}">
-                                            <input type="hidden" name="_token" value="{{ csrf_token('status' ~ device.id) }}">
-                                            <button type="submit" class="dropdown-item">Доступно</button>
-                                        </form>
-                                    </li>
-                                    {% endif %}
-                                    
-                                    {% if device.status.value != 'faulty' %}
-                                    <li>
-                                        <form method="post" action="{{ path('app_device_change_status', {'id': device.id, 'status': 'faulty'}) }}">
-                                            <input type="hidden" name="_token" value="{{ csrf_token('status' ~ device.id) }}">
-                                            <button type="submit" class="dropdown-item">Неисправно</button>
-                                        </form>
-                                    </li>
-                                    {% endif %}
-                                    
-                                    {% if device.status.value != 'in_repair' %}
-                                    <li>
-                                        <form method="post" action="{{ path('app_device_change_status', {'id': device.id, 'status': 'in_repair'}) }}">
-                                            <input type="hidden" name="_token" value="{{ csrf_token('status' ~ device.id) }}">
-                                            <button type="submit" class="dropdown-item">В ремонте</button>
-                                        </form>
-                                    </li>
-                                    {% endif %}
-                                    
-                                    {% if device.status.value != 'written_off' %}
-                                    <li>
-                                        <form method="post" action="{{ path('app_device_change_status', {'id': device.id, 'status': 'written_off'}) }}">
-                                            <input type="hidden" name="_token" value="{{ csrf_token('status' ~ device.id) }}">
-                                            <button type="submit" class="dropdown-item">Списано</button>
-                                        </form>
-                                    </li>
-                                    {% endif %}
-                                </ul>
-                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-info" title="Информация" 
+                                    data-bs-toggle="modal" data-bs-target="#deviceInfoModal" data-device-id="{{ device.id }}">
+                                <i class="bi bi-info-circle"></i>
+                            </button>
                             
                             <a href="{{ path('app_device_edit', {'id': device.id}) }}" class="btn btn-sm btn-outline-secondary" title="Редактировать">
                                 <i class="bi bi-pencil"></i>
                             </a>
                             
+                            {% if device.status.value != 'written_off' %}
                             <button type="button" class="btn btn-sm btn-outline-danger" title="Удалить" 
                                     data-bs-toggle="modal" data-bs-target="#deleteModal{{ device.id }}">
                                 <i class="bi bi-trash"></i>
                             </button>
+                            {% endif %}
                             
                             <!-- Модальное окно подтверждения удаления -->
                             <div class="modal fade" id="deleteModal{{ device.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ device.id }}" aria-hidden="true">
@@ -179,4 +143,115 @@
         {% endif %}
     </div>
 </div>
+
+<!-- Одно модальное окно для просмотра информации об устройствах -->
+<div class="modal fade" id="deviceInfoModal" tabindex="-1" aria-labelledby="deviceInfoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deviceInfoModalLabel">Информация об устройстве</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Основная информация</h6>
+                        <p><strong>Название:</strong> <span id="deviceName"></span></p>
+                        <p><strong>Тип:</strong> <span id="deviceType"></span></p>
+                        <p><strong>Серийный номер:</strong> <span id="deviceSerialNumber"></span></p>
+                        <p><strong>QR/Штрих-код:</strong> <span id="deviceQrCode"></span></p>
+                        <p><strong>Статус:</strong> <span id="deviceStatus"></span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Дополнительная информация</h6>
+                        <p><strong>Депо:</strong> <span id="deviceDepot"></span></p>
+                        <p><strong>Дата создания:</strong> <span id="deviceCreatedAt"></span></p>
+                        <p><strong>Последнее обновление:</strong> <span id="deviceUpdatedAt"></span></p>
+                        <div id="writeOffFields" style="display: none;">
+                            <p><strong>Дата списания:</strong> <span id="deviceWriteOffDate"></span></p>
+                            <p><strong>Причина списания:</strong> <span id="deviceWriteOffComment"></span></p>
+                        </div>
+                        <div id="repairFields" style="display: none;">
+                            <p><strong>Комментарий о ремонте:</strong> <span id="deviceRepairComment"></span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" id="deviceEditLink" class="btn btn-primary">
+                    <i class="bi bi-pencil"></i> Редактировать
+                </a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    /**
+     * Инициализация модального окна с информацией об устройстве.
+     * Загружает данные устройств, заполняет поля при открытии модалки,
+     * отображает статус с бейджем и обновляет ссылку на редактирование.
+     */
+    document.addEventListener('DOMContentLoaded', function() {
+        // Данные всех устройств для модального окна
+        const devices = {{ devices|json_encode|raw }};
+        
+        // Обработчик открытия модального окна
+        const deviceInfoModal = document.getElementById('deviceInfoModal');
+        deviceInfoModal.addEventListener('show.bs.modal', function(event) {
+            // Получаем кнопку, которая вызвала модальное окно
+            const button = event.relatedTarget;
+            // Получаем ID устройства из атрибута data-device-id
+            const deviceId = button.getAttribute('data-device-id');
+            
+            // Находим устройство по ID
+            const device = devices.find(d => d.id == deviceId);
+            if (!device) return;
+            
+            // Заполняем информацию об устройстве
+            document.getElementById('deviceName').textContent = device.name;
+            document.getElementById('deviceType').textContent = device.typeFormatted;
+            document.getElementById('deviceSerialNumber').textContent = device.serialNumber;
+            document.getElementById('deviceQrCode').textContent = device.qrCode ? device.qrCode : '—';
+            
+            // Статус с бейджем
+            const statusElement = document.getElementById('deviceStatus');
+            statusElement.innerHTML = '';
+            const badge = document.createElement('span');
+            badge.className = 'badge ' + device.statusBadgeClass;
+            badge.textContent = device.statusFormatted;
+            statusElement.appendChild(badge);
+            
+            // Дополнительная информация
+            document.getElementById('deviceDepot').textContent = device.depotName ? device.depotName : '—';
+            document.getElementById('deviceCreatedAt').textContent = device.createdAt || '—';
+            document.getElementById('deviceUpdatedAt').textContent = device.updatedAt || '—';
+            
+            // Специфичные поля для статусов
+            const writeOffFields = document.getElementById('writeOffFields');
+            const repairFields = document.getElementById('repairFields');
+            
+            // Скрываем все специфичные поля
+            writeOffFields.style.display = 'none';
+            repairFields.style.display = 'none';
+            
+            // Показываем поля в зависимости от статуса
+            if (device.status.value === 'written_off') {
+                writeOffFields.style.display = 'block';
+                document.getElementById('deviceWriteOffDate').textContent = device.writeOffDate || '—';
+                document.getElementById('deviceWriteOffComment').textContent = device.writeOffComment || '—';
+            } else if (device.status.value === 'in_repair') {
+                repairFields.style.display = 'block';
+                document.getElementById('deviceRepairComment').textContent = device.repairComment || '—';
+            }
+            
+            // Обновляем ссылку на редактирование
+            document.getElementById('deviceEditLink').href = '{{ path("app_device_edit", {"id": "DEVICE_ID"}) }}'.replace('DEVICE_ID', device.id);
+        });
+    });
+</script>
+{% endblock %}
 {% endblock %}
