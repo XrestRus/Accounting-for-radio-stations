@@ -7,10 +7,19 @@
     <h1>Возврат устройства</h1>
 </div>
 
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endfor %}
+
 <!-- Форма возврата устройства -->
 <div class="card">
     <div class="card-body">
-        <form>
+        {{ form_start(form) }}
             <div class="row mb-4">
                 <div class="col-12">
                     <h4>1. Выберите устройство для возврата</h4>
@@ -29,131 +38,84 @@
                                 Ввести серийный номер вручную
                             </label>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="deviceSelectMethod" id="listMethod" onclick="toggleDeviceSelectionMethod('list')">
-                            <label class="form-check-label" for="listMethod">
-                                Выбрать из списка выданных устройств
-                            </label>
-                        </div>
                     </div>
                     
                     <!-- Область сканирования QR/штрих-кода -->
-                    <div id="scanArea" class="scan-area">
-                        <div class="scan-icon">
-                            <i class="bi bi-upc-scan"></i>
+                    <div id="scanArea" class="mb-3">
+                        <label for="scanQrCode" class="form-label">QR-код устройства</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="scanQrCode" placeholder="Отсканируйте QR-код устройства">
+                            <button class="btn btn-primary" type="button" id="scanSearchBtn">Найти</button>
                         </div>
-                        <p class="mb-1">Наведите сканер на QR/штрих-код устройства</p>
-                        <p class="text-muted small">или нажмите здесь, чтобы использовать камеру устройства</p>
+                        <div class="mt-2">
+                            <div class="scan-icon text-center">
+                                <i class="bi bi-upc-scan"></i>
+                            </div>
+                            <p class="mb-1 text-center">Наведите сканер на QR/штрих-код устройства</p>
+                            <p class="text-muted small text-center">или введите код в поле выше</p>
+                        </div>
                     </div>
                     
                     <!-- Поле для ручного ввода серийного номера -->
                     <div id="manualInput" class="mb-3" style="display: none;">
                         <label for="serialNumber" class="form-label">Серийный номер устройства</label>
-                        <input type="text" class="form-control" id="serialNumber" placeholder="Введите серийный номер">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="serialNumber" placeholder="Введите серийный номер">
+                            <button class="btn btn-primary" type="button" id="searchDeviceBtn">Найти</button>
+                        </div>
                     </div>
                     
-                    <!-- Список выданных устройств -->
-                    <div id="issuedDevicesList" style="display: none;">
-                        <div class="mb-3">
-                            <input type="text" class="form-control" placeholder="Поиск по названию, серийному номеру или сотруднику">
+                    {{ form_widget(form.deviceIdentifier, { 'id': 'deviceIdentifier', 'attr': {'class': 'd-none'} }) }}
+                    
+                    {% if error %}
+                        <div class="alert alert-danger mt-3">
+                            {{ error }}
                         </div>
-                        
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Устройство</th>
-                                        <th scope="col">Серийный номер</th>
-                                        <th scope="col">Выдано</th>
-                                        <th scope="col">Сотрудник</th>
-                                        <th scope="col">Срок возврата</th>
-                                        <th scope="col"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Радиостанция АК-9</td>
-                                        <td>SN123456</td>
-                                        <td>01.10.2023 12:00</td>
-                                        <td>Иванов И.И.</td>
-                                        <td>05.10.2023 12:00</td>
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-primary">Выбрать</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>ТСКБМ-Н</td>
-                                        <td>SN789012</td>
-                                        <td>02.10.2023 09:30</td>
-                                        <td>Петров П.П.</td>
-                                        <td>06.10.2023 09:30</td>
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-primary">Выбрать</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Носитель КР</td>
-                                        <td>SN567890</td>
-                                        <td>03.10.2023 14:15</td>
-                                        <td>Сидоров С.С.</td>
-                                        <td>04.10.2023 14:15</td>
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-primary">Выбрать</button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                    {% endif %}
                 </div>
             </div>
             
             <!-- Информация о выбранном устройстве и сотруднике -->
-            <div class="row mb-4">
+            <div class="row mb-4" id="deviceInfoBlock" {% if not device %}style="display: none;"{% endif %}>
                 <div class="col-12">
                     <div class="alert alert-primary">
                         <div class="row">
                             <div class="col-md-6">
                                 <h5 class="device-info">Информация об устройстве</h5>
-                                <p><strong>Название:</strong> Радиостанция АК-9</p>
-                                <p><strong>Тип:</strong> Радиостанция</p>
-                                <p><strong>Серийный номер:</strong> SN123456</p>
-                                <p><strong>Выдано:</strong> 01.10.2023 12:00</p>
-                                <p><strong>Срок возврата:</strong> 05.10.2023 12:00</p>
+                                <p><strong>Название:</strong> <span id="deviceName">{% if device %}{{ device.name }}{% endif %}</span></p>
+                                <p><strong>Тип:</strong> <span id="deviceType">{% if device %}{{ device.typeFormatted }}{% endif %}</span></p>
+                                <p><strong>Серийный номер:</strong> <span id="deviceSerialNumber">{% if device %}{{ device.serialNumber }}{% endif %}</span></p>
+                                <p><strong>Выдано:</strong> <span id="deviceIssuedAt">{% if device %}{{ device.issuedAt }}{% endif %}</span></p>
+                                <p><strong>Срок возврата:</strong> <span id="deviceDueDate">{% if device %}{{ device.dueDate }}{% endif %}</span></p>
                             </div>
                             <div class="col-md-6">
                                 <h5 class="employee-info">Информация о сотруднике</h5>
-                                <p><strong>ФИО:</strong> Иванов Иван Иванович</p>
-                                <p><strong>Должность:</strong> Машинист</p>
-                                <p><strong>Подразделение:</strong> Локомотивное депо</p>
-                                <p><strong>Телефон:</strong> +7 999 123 45 67</p>
+                                <p><strong>ФИО:</strong> <span id="employeeFullName">{% if device %}{{ device.employee.fullName }}{% endif %}</span></p>
+                                <p><strong>Должность:</strong> <span id="employeePosition">{% if device %}{{ device.employee.position }}{% endif %}</span></p>
+                                <p><strong>Подразделение:</strong> <span id="employeeDepartment">{% if device %}{{ device.employee.department }}{% endif %}</span></p>
+                                <p><strong>Телефон:</strong> <span id="employeePhone">{% if device %}{{ device.employee.phone }}{% endif %}</span></p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <div class="row mb-4">
+            <div class="row mb-4" id="returnStatusBlock" {% if not device %}style="display: none;"{% endif %}>
                 <div class="col-12">
                     <h4>2. Укажите состояние устройства</h4>
                     <div class="mb-3">
-                        <label for="deviceStatus" class="form-label required-field">Состояние устройства</label>
-                        <select class="form-select" id="deviceStatus" required onchange="toggleFaultyReason()">
-                            <option value="">Выберите состояние</option>
-                            <option value="ok" selected>Исправно</option>
-                            <option value="faulty">Неисправно</option>
-                        </select>
+                        {{ form_label(form.returnStatus, null, {'label_attr': {'class': 'form-label required-field'}}) }}
+                        {{ form_widget(form.returnStatus, {'attr': {'class': 'form-select', 'onchange': 'toggleFaultyReason()'}}) }}
+                        {{ form_errors(form.returnStatus) }}
                     </div>
                     
+                    {# Закомментировано поле "Причина неисправности"
                     <div id="faultyReasonBlock" class="mb-3" style="display: none;">
-                        <label for="faultyReason" class="form-label required-field">Причина неисправности</label>
-                        <textarea class="form-control" id="faultyReason" rows="3" placeholder="Опишите причину неисправности"></textarea>
+                        {{ form_label(form.comment, 'Причина неисправности', {'label_attr': {'class': 'form-label required-field'}}) }}
+                        {{ form_widget(form.comment, {'attr': {'rows': '3', 'placeholder': 'Опишите причину неисправности'}}) }}
+                        {{ form_errors(form.comment) }}
                     </div>
-                    
-                    <div class="mb-3">
-                        <label for="returnComment" class="form-label">Комментарий</label>
-                        <textarea class="form-control" id="returnComment" rows="3" placeholder="Дополнительная информация о возврате устройства"></textarea>
-                    </div>
+                    #}
                 </div>
             </div>
 
@@ -166,10 +128,10 @@
             </div>
 
             <div class="d-flex justify-content-between mt-4">
-                <button type="button" class="btn btn-secondary">Отмена</button>
-                <button type="submit" class="btn btn-primary">Принять устройство</button>
+                <a href="{{ path('app_device') }}" class="btn btn-secondary">Отмена</a>
+                <button type="submit" class="btn btn-primary" id="submitBtn" {% if not device %}disabled{% endif %}>Принять устройство</button>
             </div>
-        </form>
+        {{ form_end(form) }}
     </div>
 </div>
 {% endblock %}
@@ -177,33 +139,123 @@
 {% block javascripts %}
 {{ parent() }}
 <script>
-    // Функция для переключения способа выбора устройства
+    document.addEventListener('DOMContentLoaded', function() {
+        // Установка значения deviceIdentifier из URL параметра
+        const urlParams = new URLSearchParams(window.location.search);
+        const deviceIdentifier = urlParams.get('deviceIdentifier');
+        if (deviceIdentifier) {
+            document.getElementById('deviceIdentifier').value = deviceIdentifier;
+        }
+        
+        // Функция для переключения способа выбора устройства
+        function toggleDeviceSelectionMethod(method) {
+            // Скрываем все блоки выбора
+            document.getElementById('scanArea').style.display = 'none';
+            document.getElementById('manualInput').style.display = 'none';
+            
+            // Показываем выбранный блок
+            if (method === 'scan') {
+                document.getElementById('scanArea').style.display = 'block';
+            } else if (method === 'manual') {
+                document.getElementById('manualInput').style.display = 'block';
+            }
+        }
+        
+        // Назначаем обработчики событий для переключения методов
+        document.getElementById('scanMethod').addEventListener('change', function() {
+            if(this.checked) toggleDeviceSelectionMethod('scan');
+        });
+        
+        document.getElementById('manualMethod').addEventListener('change', function() {
+            if(this.checked) toggleDeviceSelectionMethod('manual');
+        });
+        
+        // Функция для отображения/скрытия блока причины неисправности
+        function toggleFaultyReason() {
+            // Закомментировано, поскольку поле "Причина неисправности" исключено из формы
+            /*
+            const deviceStatus = document.querySelector('select[name="return_device[returnStatus]"]').value;
+            const faultyReasonBlock = document.getElementById('faultyReasonBlock');
+            
+            if (deviceStatus === '{{ constant('App\\Entity\\Transaction::RETURN_STATUS_RETURNED_FAULTY') }}') {
+                faultyReasonBlock.style.display = 'block';
+            } else {
+                faultyReasonBlock.style.display = 'none';
+            }
+            */
+        }
+        
+        // Функция для поиска устройства по серийному номеру или QR-коду
+        function searchDeviceBySerial() {
+            const identifier = document.getElementById('serialNumber').value.trim();
+            if (!identifier) return;
+            
+            window.location.href = '{{ path('app_device_return') }}?deviceIdentifier=' + encodeURIComponent(identifier);
+        }
+        
+        // Функция для поиска устройства по QR-коду
+        function searchDeviceByQrCode() {
+            const identifier = document.getElementById('scanQrCode').value.trim();
+            if (!identifier) return;
+            
+            window.location.href = '{{ path('app_device_return') }}?deviceIdentifier=' + encodeURIComponent(identifier);
+        }
+        
+        // Назначаем обработчик события для кнопки поиска по серийному номеру
+        document.getElementById('searchDeviceBtn').addEventListener('click', searchDeviceBySerial);
+        
+        // Назначаем обработчик события для кнопки поиска по QR-коду
+        document.getElementById('scanSearchBtn').addEventListener('click', searchDeviceByQrCode);
+        
+        // Назначаем обработчик события для клавиши Enter в поле ввода серийного номера
+        document.getElementById('serialNumber').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchDeviceBySerial();
+            }
+        });
+        
+        // Назначаем обработчик события для клавиши Enter в поле ввода QR-кода
+        document.getElementById('scanQrCode').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchDeviceByQrCode();
+            }
+        });
+        
+        // Автофокус на поле QR-кода при загрузке страницы
+        document.getElementById('scanQrCode').focus();
+    });
+    
+    // Переключение способа выбора устройства
     function toggleDeviceSelectionMethod(method) {
         // Скрываем все блоки выбора
         document.getElementById('scanArea').style.display = 'none';
         document.getElementById('manualInput').style.display = 'none';
-        document.getElementById('issuedDevicesList').style.display = 'none';
         
         // Показываем выбранный блок
         if (method === 'scan') {
             document.getElementById('scanArea').style.display = 'block';
+            setTimeout(function() { document.getElementById('scanQrCode').focus(); }, 100);
         } else if (method === 'manual') {
             document.getElementById('manualInput').style.display = 'block';
-        } else if (method === 'list') {
-            document.getElementById('issuedDevicesList').style.display = 'block';
+            setTimeout(function() { document.getElementById('serialNumber').focus(); }, 100);
         }
     }
     
     // Функция для отображения/скрытия блока причины неисправности
     function toggleFaultyReason() {
-        const deviceStatus = document.getElementById('deviceStatus').value;
+        // Закомментировано, поскольку поле "Причина неисправности" исключено из формы
+        /*
+        const deviceStatus = document.querySelector('select[name="return_device[returnStatus]"]').value;
         const faultyReasonBlock = document.getElementById('faultyReasonBlock');
         
-        if (deviceStatus === 'faulty') {
+        if (deviceStatus === '{{ constant('App\\Entity\\Transaction::RETURN_STATUS_RETURNED_FAULTY') }}') {
             faultyReasonBlock.style.display = 'block';
         } else {
             faultyReasonBlock.style.display = 'none';
         }
+        */
     }
 </script>
 {% endblock %} 
