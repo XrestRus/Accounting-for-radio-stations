@@ -45,6 +45,25 @@ Accounting for radio stations
 ![](https://github.com/XrestRus/Accounting-for-radio-stations/blob/master/context/8.remove-device.png)
 </details> 
 
+<details >
+    <summary>Возврат устройства</summary>
+
+![](https://github.com/XrestRus/Accounting-for-radio-stations/blob/master/context/9.device-return.png)
+</details> 
+
+<details >
+    <summary>Выдача устройства</summary>
+
+![](https://github.com/XrestRus/Accounting-for-radio-stations/blob/master/context/10.device-issue.png)
+</details> 
+
+<details >
+    <summary>Список устройств</summary>
+
+![](https://github.com/XrestRus/Accounting-for-radio-stations/blob/master/context/11.devices.png)
+</details> 
+
+
 # Лог эксперимента
 
 - день 1 (1ч): подготовка ТЗ через deepseek
@@ -53,6 +72,7 @@ Accounting for radio stations
 - день 4 (1.2ч): сделали дизайн в стиле РЖД, подключили symfony, нарезали верстку на шаблоны и контроллеры
 - день 5 (1.1ч): написали план спринта, установили докер, локально окружение разработки
 - день 6 (1.2ч): первичные модели в БД, страница списка устройств и формы добавления и редактирования устройств
+- день 7 (1.3ч): доработка списка устройств, формы возврата и выдачи устройств
 
 # Запуск проекта с использованием Docker
 
