@@ -12,13 +12,18 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Контроллер для управления устройствами
+ */
 class DeviceController extends AbstractController
 {
     private DeviceRepository $deviceRepository;
     private EntityManagerInterface $entityManager;
 
-    public function __construct(DeviceRepository $deviceRepository, EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        DeviceRepository $deviceRepository,
+        EntityManagerInterface $entityManager
+    ) {
         $this->deviceRepository = $deviceRepository;
         $this->entityManager = $entityManager;
     }
@@ -151,14 +156,6 @@ class DeviceController extends AbstractController
         // Отключаем этот метод, возвращая ошибку
         $this->addFlash('error', 'Изменение статуса не поддерживается. Используйте соответствующие операции выдачи и возврата устройств.');
         return $this->redirectToRoute('app_device');
-    }
-
-    #[Route('/devices/issue', name: 'app_device_issue')]
-    public function issue(): Response
-    {
-        return $this->render('device/issue.html.twig', [
-            'controller_name' => 'DeviceController',
-        ]);
     }
 
     #[Route('/devices/return', name: 'app_device_return')]
