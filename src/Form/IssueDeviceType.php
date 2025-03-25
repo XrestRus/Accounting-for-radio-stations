@@ -11,7 +11,11 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Doctrine\ORM\EntityRepository;
 
+/**
+ * Форма для выдачи устройства сотруднику
+ */
 class IssueDeviceType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -31,6 +35,11 @@ class IssueDeviceType extends AbstractType
                         'message' => 'Пожалуйста, выберите сотрудника',
                     ]),
                 ],
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('e')
+                        ->where('e.deletedAt IS NULL')
+                        ->orderBy('e.fullName', 'ASC');
+                },
             ])
             ->add('deviceIdentifier', TextType::class, [
                 'mapped' => false,
