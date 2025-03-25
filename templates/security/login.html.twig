@@ -18,9 +18,16 @@
                 </div>
             </div>
             <div class="login-form">
-                <form action="{{ path('app_dashboard') }}" method="post">
+                <form action="{{ path('app_login') }}" method="post">
+                    {% if error %}
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle-fill"></i> {{ error.messageKey|trans(error.messageData, 'security') }}
+                        </div>
+                    {% endif %}
+                    
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="username" name="username" placeholder="Имя пользователя" required>
+                        <input type="text" class="form-control" id="username" name="username" 
+                               value="{{ last_username }}" placeholder="Имя пользователя" required autofocus>
                         <label for="username">Имя пользователя</label>
                     </div>
                     <div class="form-floating">
@@ -28,11 +35,20 @@
                         <label for="password">Пароль</label>
                     </div>
                     <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" value="" id="rememberMe">
-                        <label class="form-check-label" for="rememberMe">
+                        <input class="form-check-input" type="checkbox" id="_remember_me" name="_remember_me">
+                        <label class="form-check-label" for="_remember_me">
                             Запомнить меня
                         </label>
                     </div>
+
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                    
+                    {% if app.user %}
+                        <div class="mb-3">
+                            Вы уже вошли как {{ app.user.username }}, <a href="{{ path('app_logout') }}">Выйти</a>
+                        </div>
+                    {% endif %}
+                    
                     <div class="forgot-password">
                         <a href="#" class="text-decoration-none">Забыли пароль?</a>
                     </div>
@@ -42,11 +58,6 @@
             <div class="login-footer">
                 <p class="mb-0">© 2023 Учет радиостанций. Все права защищены.</p>
             </div>
-        </div>
-        
-        <!-- Сообщение об ошибке (скрыто по умолчанию) -->
-        <div class="alert alert-danger mt-3 d-none" id="loginError" role="alert">
-            <i class="bi bi-exclamation-triangle-fill"></i> Неверное имя пользователя или пароль.
         </div>
     </div>
 </body>

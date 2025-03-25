@@ -51,17 +51,9 @@ class IssueController extends AbstractController
         // Получаем текущего пользователя
         $user = $this->getUser();
         
-        // Если пользователь не авторизован, получаем первого пользователя из базы данных
-        // Это временное решение до полной настройки авторизации
+        // Если пользователь не авторизован, возвращаем на страницу логина
         if (!$user) {
-            $userRepository = $this->entityManager->getRepository('App\Entity\User');
-            $user = $userRepository->findOneBy([]);
-            
-            // Если пользователей в системе нет, создаем сообщение об ошибке
-            if (!$user) {
-                $this->addFlash('error', 'Система не может выполнить операцию: не найден пользователь для выдачи устройства');
-                return $this->redirectToRoute('app_device');
-            }
+            return $this->redirectToRoute('app_login');
         }
         
         $transaction->setIssuedBy($user);

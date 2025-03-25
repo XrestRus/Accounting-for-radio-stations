@@ -41,20 +41,26 @@ class ReturnController extends AbstractController
     #[Route('/return', name: 'app_device_return')]
     public function return(Request $request): Response
     {
-        $transaction = null;
-        $error = null;
+        // Проверяем, авторизован ли пользователь
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+        
+        $deviceIdentifier = $request->query->get('deviceIdentifier');
         $deviceInfo = null;
+        $error = null;
+        $activeTransaction = null;
         
         // Обработка GET запроса с параметром deviceIdentifier
-        $deviceIdentifier = $request->query->get('deviceIdentifier');
         if ($deviceIdentifier) {
             $device = $this->findDeviceByIdentifier($deviceIdentifier);
             if ($device) {
                 if ($device->getStatus() == StatusEnum::ISSUED) {
                     // Ищем активную транзакцию для этого устройства
-                    $transaction = $this->transactionRepository->findActiveByDevice($device->getId());
-                    if ($transaction) {
-                        $deviceInfo = $this->formatDeviceAndEmployeeInfo($device, $transaction);
+                    $activeTransaction = $this->transactionRepository->findActiveByDevice($device->getId());
+                    if ($activeTransaction) {
+                        $deviceInfo = $this->formatDeviceAndEmployeeInfo($device, $activeTransaction);
                     } else {
                         $error = 'В системе не найдена информация о выдаче этого устройства';
                     }
@@ -68,7 +74,7 @@ class ReturnController extends AbstractController
         }
 
         // Если транзакция найдена, создаем форму
-        $form = $this->createForm(ReturnDeviceType::class, $transaction);
+        $form = $this->createForm(ReturnDeviceType::class, $activeTransaction);
         $form->handleRequest($request);
 
         // Обработка отправки формы
@@ -88,52 +94,40 @@ class ReturnController extends AbstractController
             }
             
             // Ищем активную транзакцию для этого устройства
-            $transaction = $this->transactionRepository->findActiveByDevice($device->getId());
-            if (!$transaction) {
+            $activeTransaction = $this->transactionRepository->findActiveByDevice($device->getId());
+            if (!$activeTransaction) {
                 $this->addFlash('error', 'В системе не найдена информация о выдаче этого устройства');
                 return $this->redirectToRoute('app_device_return');
             }
             
             // Обновляем поля транзакции
-            $transaction->setReturnedAt(new \DateTime());
-            $transaction->setReturnStatus($form->get('returnStatus')->getData());
+            $activeTransaction->setReturnedAt(new \DateTime());
+            $activeTransaction->setReturnStatus($form->get('returnStatus')->getData());
             
-            // Получаем текущего пользователя
-            $user = $this->getUser();
-            
-            // Если пользователь не авторизован, получаем первого пользователя из базы данных
-            // Это временное решение до полной настройки авторизации
-            if (!$user) {
-                $userRepository = $this->entityManager->getRepository('App\Entity\User');
-                $user = $userRepository->findOneBy([]);
-                
-                if (!$user) {
-                    $this->addFlash('error', 'Система не может выполнить операцию: не найден пользователь для приема устройства');
-                    return $this->redirectToRoute('app_device');
-                }
-            }
+            // Сохраняем в БД
+            $this->entityManager->flush();
             
             // Обновляем статус устройства в зависимости от состояния при возврате
-            if ($transaction->getReturnStatus() === Transaction::RETURN_STATUS_RETURNED_OK) {
+            if ($activeTransaction->getReturnStatus() === Transaction::RETURN_STATUS_RETURNED_OK) {
                 $device->setStatus(StatusEnum::AVAILABLE);
             } else {
                 $device->setStatus(StatusEnum::FAULTY);
             }
             
-            // Сохраняем изменения в базе данных
+            // Сохраняем изменения устройства
             $this->entityManager->flush();
             
             $this->addFlash('success', sprintf(
                 'Устройство "%s" успешно принято от сотрудника "%s"',
                 $device->getName(),
-                $transaction->getEmployee()->getFullName()
+                $activeTransaction->getEmployee()->getFullName()
             ));
             
             return $this->redirectToRoute('app_device');
         }
         
         return $this->render('device/return.html.twig', [
-            'form' => $form->createView(),
+            'form' => isset($form) ? $form->createView() : null,
             'device' => $deviceInfo,
             'error' => $error,
         ]);

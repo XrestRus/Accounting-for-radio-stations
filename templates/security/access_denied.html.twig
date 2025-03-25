@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Учет радиостанций - Доступ запрещен{% endblock %}
+
+{% block body %}
+<div class="container pt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body text-center p-5">
+                    <div class="mb-4">
+                        <i class="bi bi-shield-exclamation" style="font-size: 5rem; color: #dc3545;"></i>
+                    </div>
+                    <h1 class="mb-3">Доступ запрещен</h1>
+                    <p class="lead mb-4">У вас нет прав для доступа к запрашиваемой странице.</p>
+                    <p class="text-muted mb-4">Если вы считаете, что произошла ошибка, пожалуйста, обратитесь к администратору системы.</p>
+                    <div class="d-grid gap-2 d-md-block">
+                        <a href="{{ path('app_dashboard') }}" class="btn btn-primary">
+                            <i class="bi bi-house-door-fill"></i> Вернуться на главную
+                        </a>
+                        <a href="{{ path('app_logout') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-box-arrow-right"></i> Выйти из системы
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

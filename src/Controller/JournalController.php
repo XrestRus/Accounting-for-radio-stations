@@ -32,6 +32,12 @@ class JournalController extends AbstractController
     #[Route('/journal', name: 'app_journal')]
     public function index(Request $request): Response
     {
+        // Проверяем, авторизован ли пользователь
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+        
         // Получаем параметры фильтрации из запроса
         $dateFrom = $request->query->get('dateFrom', '');
         $dateTo = $request->query->get('dateTo', '');
@@ -169,6 +175,12 @@ class JournalController extends AbstractController
     #[Route('/journal/export', name: 'app_journal_export')]
     public function export(Request $request): Response
     {
+        // Проверяем, авторизован ли пользователь
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+        
         // Получаем параметры фильтрации из запроса (те же, что и для отображения)
         $dateFrom = $request->query->get('dateFrom', '');
         $dateTo = $request->query->get('dateTo', '');
