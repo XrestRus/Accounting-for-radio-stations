@@ -5,6 +5,7 @@ namespace App\DataFixtures;
 use App\Entity\Depot;
 use App\Entity\Device;
 use App\Entity\Employee;
+use App\Entity\StatusEnum;
 use App\Entity\Transaction;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -88,7 +89,7 @@ class AppFixtures extends Fixture
         $device1->setType('Радиостанция');
         $device1->setSerialNumber('SN123456');
         $device1->setQrCode('QR123');
-        $device1->setStatus(Device::STATUS_AVAILABLE);
+        $device1->setStatus(StatusEnum::AVAILABLE);
         $device1->setDepot($depot1);
         $manager->persist($device1);
 
@@ -97,7 +98,7 @@ class AppFixtures extends Fixture
         $device2->setType('Носитель');
         $device2->setSerialNumber('SN654321');
         $device2->setQrCode('QR456');
-        $device2->setStatus(Device::STATUS_ISSUED);
+        $device2->setStatus(StatusEnum::ISSUED);
         $device2->setDepot($depot1);
         $manager->persist($device2);
 
@@ -106,7 +107,7 @@ class AppFixtures extends Fixture
         $device3->setType('Носитель');
         $device3->setSerialNumber('SN789012');
         $device3->setQrCode('QR789');
-        $device3->setStatus(Device::STATUS_AVAILABLE);
+        $device3->setStatus(StatusEnum::AVAILABLE);
         $device3->setDepot($depot2);
         $manager->persist($device3);
 
@@ -115,7 +116,7 @@ class AppFixtures extends Fixture
         $device4->setType('Носитель');
         $device4->setSerialNumber('SN345678');
         $device4->setQrCode('QR345');
-        $device4->setStatus(Device::STATUS_FAULTY);
+        $device4->setStatus(StatusEnum::FAULTY);
         $device4->setDepot($depot1);
         $manager->persist($device4);
 
@@ -124,7 +125,7 @@ class AppFixtures extends Fixture
         $device5->setType('Носитель');
         $device5->setSerialNumber('SN901234');
         $device5->setQrCode('QR901');
-        $device5->setStatus(Device::STATUS_IN_REPAIR);
+        $device5->setStatus(StatusEnum::IN_REPAIR);
         $device5->setRepairComment('На ремонте: неисправная батарея');
         $device5->setDepot($depot2);
         $manager->persist($device5);
