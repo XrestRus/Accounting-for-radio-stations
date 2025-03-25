@@ -96,4 +96,82 @@ class TransactionRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Находит транзакции по заданным фильтрам
+     */
+    public function findByFilters(
+        ?\DateTime $dateFrom = null, 
+        ?\DateTime $dateTo = null, 
+        ?string $operationType = null, 
+        ?string $employee = null, 
+        ?string $device = null, 
+        ?string $status = null
+    ) {
+        $qb = $this->createQueryBuilder('t')
+            ->innerJoin('t.device', 'd')
+            ->innerJoin('t.employee', 'e')
+            ->innerJoin('t.issuedBy', 'u');
+        
+        // Фильтр по дате начала
+        if ($dateFrom) {
+            $qb->andWhere('
+                (t.issuedAt >= :dateFrom) OR 
+                (t.returnedAt IS NOT NULL AND t.returnedAt >= :dateFrom)
+            ')
+            ->setParameter('dateFrom', $dateFrom);
+        }
+        
+        // Фильтр по дате окончания
+        if ($dateTo) {
+            $qb->andWhere('
+                (t.issuedAt <= :dateTo) OR 
+                (t.returnedAt IS NOT NULL AND t.returnedAt <= :dateTo)
+            ')
+            ->setParameter('dateTo', $dateTo);
+        }
+        
+        // Фильтр по типу операции
+        if ($operationType) {
+            if ($operationType === 'issue') {
+                $qb->andWhere('t.returnedAt IS NULL');
+            } elseif ($operationType === 'return') {
+                $qb->andWhere('t.returnedAt IS NOT NULL');
+            }
+        }
+        
+        // Фильтр по сотруднику
+        if ($employee) {
+            $qb->andWhere('e.fullName LIKE :employee')
+                ->setParameter('employee', '%' . $employee . '%');
+        }
+        
+        // Фильтр по устройству
+        if ($device) {
+            $qb->andWhere('d.name LIKE :device OR d.serialNumber LIKE :device')
+                ->setParameter('device', '%' . $device . '%');
+        }
+        
+        // Фильтр по статусу
+        if ($status) {
+            $now = new \DateTime();
+            
+            if ($status === 'issued') {
+                $qb->andWhere('t.returnedAt IS NULL')
+                   ->andWhere('t.dueDate >= :now')
+                   ->setParameter('now', $now);
+            } elseif ($status === 'returned') {
+                $qb->andWhere('t.returnedAt IS NOT NULL');
+            } elseif ($status === 'overdue') {
+                $qb->andWhere('t.returnedAt IS NULL')
+                   ->andWhere('t.dueDate < :now')
+                   ->setParameter('now', $now);
+            }
+        }
+        
+        // Сортировка по дате (сначала новые)
+        $qb->addOrderBy('CASE WHEN t.returnedAt IS NOT NULL THEN t.returnedAt ELSE t.issuedAt END', 'DESC');
+        
+        return $qb->getQuery()->getResult();
+    }
 } 
