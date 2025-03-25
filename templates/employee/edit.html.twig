@@ -1,0 +1,108 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {% if edit_mode %}
+        Учет радиостанций - Редактирование сотрудника
+    {% else %}
+        Учет радиостанций - Добавление сотрудника
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>
+        {% if edit_mode %}
+            Редактирование сотрудника
+        {% else %}
+            Добавление сотрудника
+        {% endif %}
+    </h1>
+    <a href="{{ path('app_employee') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Вернуться к списку
+    </a>
+</div>
+
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endfor %}
+
+<!-- Форма добавления/редактирования сотрудника -->
+<div class="card">
+    <div class="card-body">
+        {{ form_start(form) }}
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        {{ form_label(form.fullName, null, {'label_attr': {'class': 'form-label required-field'}}) }}
+                        {{ form_widget(form.fullName) }}
+                        {{ form_errors(form.fullName) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.position, null, {'label_attr': {'class': 'form-label required-field'}}) }}
+                        {{ form_widget(form.position) }}
+                        {{ form_errors(form.position) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.department, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.department) }}
+                        {{ form_errors(form.department) }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        {{ form_label(form.phone, null, {'label_attr': {'class': 'form-label'}}) }}
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                            {{ form_widget(form.phone, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        {{ form_errors(form.phone) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.email, null, {'label_attr': {'class': 'form-label'}}) }}
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        {{ form_errors(form.email) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.depot, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.depot) }}
+                        {{ form_errors(form.depot) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> Поля, отмеченные <span class="text-danger">*</span>, обязательны для заполнения.
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{{ path('app_employee') }}" class="btn btn-secondary">Отмена</a>
+                <div>
+                    <button type="reset" class="btn btn-outline-secondary me-2">Сбросить</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Здесь может быть JavaScript код для обработки формы
+    });
+</script>
+{% endblock %} 
