@@ -245,44 +245,41 @@
         document.getElementById('deviceInfo').style.display = 'none';
         document.getElementById('deviceError').style.display = 'none';
         
-        // Запрашиваем информацию об устройстве
+        // Запрашиваем информацию об устройстве через AJAX
         fetch(`{{ path('app_device_get_info') }}?identifier=${encodeURIComponent(identifier)}`)
             .then(response => response.json())
             .then(data => {
+                // Если получена ошибка, показываем её
                 if (data.error) {
-                    // Показываем ошибку
                     document.getElementById('deviceErrorMessage').textContent = data.error;
                     document.getElementById('deviceError').style.display = 'block';
-                } else {
-                    // Показываем информацию об устройстве
-                    const device = data.device;
-                    let html = `
-                        <div class="col-md-6">
-                            <p><strong>Название:</strong> ${device.name}</p>
-                            <p><strong>Тип:</strong> ${device.typeFormatted}</p>
-                            <p><strong>Серийный номер:</strong> ${device.serialNumber}</p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>Статус:</strong> <span class="badge ${device.statusBadgeClass}">${device.statusFormatted}</span></p>
-                    `;
-                    
-                    if (device.qrCode) {
-                        html += `<p><strong>QR/Штрих-код:</strong> ${device.qrCode}</p>`;
-                    }
-                    
-                    if (device.depotName) {
-                        html += `<p><strong>Депо:</strong> ${device.depotName}</p>`;
-                    }
-                    
-                    html += `</div>`;
-                    
-                    document.getElementById('deviceInfoContent').innerHTML = html;
-                    document.getElementById('deviceInfo').style.display = 'block';
+                    return;
                 }
+                
+                // Заполняем информацию об устройстве
+                const device = data.device;
+                let html = `
+                    <div class="col-md-6">
+                        <p><strong>Название:</strong> ${device.name}</p>
+                        <p><strong>Тип:</strong> ${device.typeFormatted}</p>
+                        <p><strong>Серийный номер:</strong> ${device.serialNumber}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Статус:</strong> <span class="badge ${device.statusBadgeClass}">${device.statusFormatted}</span></p>
+                        ${device.qrCode ? `<p><strong>QR/Штрих-код:</strong> ${device.qrCode}</p>` : ''}
+                        ${device.depotName ? `<p><strong>Депо:</strong> ${device.depotName}</p>` : ''}
+                    </div>
+                `;
+                
+                document.getElementById('deviceInfoContent').innerHTML = html;
+                document.getElementById('deviceInfo').style.display = 'block';
+                
+                // Устанавливаем идентификатор устройства в скрытое поле формы
+                document.getElementById('issue_device_deviceIdentifier').value = device.qrCode || device.serialNumber;
             })
             .catch(error => {
-                console.error('Error:', error);
-                document.getElementById('deviceErrorMessage').textContent = 'Произошла ошибка при получении информации об устройстве';
+                console.error('Ошибка при запросе информации об устройстве:', error);
+                document.getElementById('deviceErrorMessage').textContent = 'Произошла ошибка при запросе информации об устройстве';
                 document.getElementById('deviceError').style.display = 'block';
             });
     }
@@ -291,16 +288,6 @@
     function selectDevice(element) {
         const identifier = element.dataset.identifier;
         document.getElementById('issue_device_deviceIdentifier').value = identifier;
-        
-        // Убираем выделение со всех устройств
-        document.querySelectorAll('.device-card').forEach(card => {
-            card.classList.remove('selected');
-        });
-        
-        // Выделяем выбранное устройство
-        element.classList.add('selected');
-        
-        // Запрашиваем информацию об устройстве
         searchDevice(identifier);
     }
     

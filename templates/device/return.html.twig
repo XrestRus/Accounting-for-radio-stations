@@ -190,7 +190,7 @@
             const identifier = document.getElementById('serialNumber').value.trim();
             if (!identifier) return;
             
-            window.location.href = '{{ path('app_device_return') }}?deviceIdentifier=' + encodeURIComponent(identifier);
+            searchDeviceByIdentifier(identifier);
         }
         
         // Функция для поиска устройства по QR-коду
@@ -198,7 +198,49 @@
             const identifier = document.getElementById('scanQrCode').value.trim();
             if (!identifier) return;
             
-            window.location.href = '{{ path('app_device_return') }}?deviceIdentifier=' + encodeURIComponent(identifier);
+            searchDeviceByIdentifier(identifier);
+        }
+        
+        // Функция для выполнения AJAX-запроса для получения информации о выданном устройстве
+        function searchDeviceByIdentifier(identifier) {
+            // Устанавливаем значение в скрытое поле формы
+            document.getElementById('deviceIdentifier').value = identifier;
+            
+            // Запрашиваем информацию об устройстве через AJAX
+            fetch(`{{ path('app_device_get_issued_info') }}?identifier=${encodeURIComponent(identifier)}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Если получена ошибка, показываем её
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
+                    
+                    // Заполняем информацию об устройстве и сотруднике
+                    const device = data.device;
+                    
+                    // Устройство
+                    document.getElementById('deviceName').textContent = device.name;
+                    document.getElementById('deviceType').textContent = device.typeFormatted;
+                    document.getElementById('deviceSerialNumber').textContent = device.serialNumber;
+                    document.getElementById('deviceIssuedAt').textContent = device.issuedAt;
+                    document.getElementById('deviceDueDate').textContent = device.dueDate;
+                    
+                    // Сотрудник
+                    document.getElementById('employeeFullName').textContent = device.employee.fullName;
+                    document.getElementById('employeePosition').textContent = device.employee.position;
+                    document.getElementById('employeeDepartment').textContent = device.employee.department;
+                    document.getElementById('employeePhone').textContent = device.employee.phone;
+                    
+                    // Показываем блоки информации и разблокируем кнопку
+                    document.getElementById('deviceInfoBlock').style.display = 'block';
+                    document.getElementById('returnStatusBlock').style.display = 'block';
+                    document.getElementById('submitBtn').disabled = false;
+                })
+                .catch(error => {
+                    console.error('Ошибка при запросе информации об устройстве:', error);
+                    alert('Произошла ошибка при запросе информации об устройстве');
+                });
         }
         
         // Назначаем обработчик события для кнопки поиска по серийному номеру
