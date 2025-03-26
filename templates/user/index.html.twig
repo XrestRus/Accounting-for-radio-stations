@@ -53,6 +53,7 @@
                                         <i class="bi bi-info-circle"></i>
                                     </button>
                                     
+                                    {% if not user.deletedAt %}
                                     <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-sm btn-outline-secondary" title="Редактировать">
                                         <i class="bi bi-pencil"></i>
                                     </a>
@@ -60,30 +61,35 @@
                                     <button type="button" class="btn btn-sm btn-outline-danger" title="Удалить" data-bs-toggle="modal" data-bs-target="#deleteModal{{ user.id }}">
                                         <i class="bi bi-trash"></i>
                                     </button>
-                                    
-                                    <!-- Модальное окно подтверждения удаления -->
-                                    <div class="modal fade" id="deleteModal{{ user.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ user.id }}" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="deleteModalLabel{{ user.id }}">Подтверждение удаления</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    Вы уверены, что хотите удалить пользователя "{{ user.username }}"?
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <form method="post" action="{{ path('app_user_delete', {'id': user.id}) }}" style="margin-right: auto;">
-                                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
-                                                        <button type="submit" class="btn btn-danger">Удалить</button>
-                                                    </form>
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    {% else %}
+                                    <span class="badge bg-danger">Удален</span>
+                                    {% endif %}
                                 </td>
                             </tr>
+                            
+                            {% if not user.deletedAt %}
+                            <!-- Модальное окно подтверждения удаления -->
+                            <div class="modal fade" id="deleteModal{{ user.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ user.id }}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteModalLabel{{ user.id }}">Подтверждение удаления</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Вы уверены, что хотите удалить пользователя "{{ user.username }}"?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <form method="post" action="{{ path('app_user_delete', {'id': user.id}) }}" style="margin-right: auto;">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                                                <button type="submit" class="btn btn-danger">Удалить</button>
+                                            </form>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
                         {% else %}
                             <tr>
                                 <td colspan="6" class="text-center py-4">Нет пользователей в системе</td>
@@ -141,6 +147,12 @@
                                     <th>Последний вход</th>
                                     <td>{{ user.lastLoginAt ? user.lastLoginAt|date('d.m.Y H:i') : 'Никогда' }}</td>
                                 </tr>
+                                {% if user.deletedAt %}
+                                <tr>
+                                    <th>Статус</th>
+                                    <td><span class="badge bg-danger">Удален {{ user.deletedAt|date('d.m.Y H:i') }}</span></td>
+                                </tr>
+                                {% endif %}
                             </tbody>
                         </table>
                     </div>

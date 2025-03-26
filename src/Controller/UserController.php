@@ -136,7 +136,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * Удаляет пользователя
+     * Удаляет пользователя (мягкое удаление)
      */
     #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
     public function delete(
@@ -160,7 +160,8 @@ class UserController extends AbstractController
                 return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
             }
             
-            $entityManager->remove($user);
+            // Мягкое удаление - устанавливаем дату удаления
+            $user->setDeletedAt(new \DateTime());
             $entityManager->flush();
             
             $this->addFlash('success', 'Пользователь успешно удален');

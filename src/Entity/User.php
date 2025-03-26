@@ -6,6 +6,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
+/**
+ * Сущность пользователя системы
+ */
 #[ORM\Entity(repositoryClass: 'App\Repository\UserRepository')]
 #[ORM\Table(name: 'users', options: ['comment' => 'Пользователи системы (операторы и администраторы)'])]
 #[ORM\HasLifecycleCallbacks]
@@ -37,6 +40,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Дата и время последнего входа в систему'])]
     private ?\DateTimeInterface $lastLoginAt = null;
+
+    #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Дата и время удаления пользователя (для мягкого удаления)'])]
+    private ?\DateTimeInterface $deletedAt = null;
 
     public function getId(): ?int
     {
@@ -118,6 +124,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->lastLoginAt = $lastLoginAt;
         return $this;
+    }
+
+    public function getDeletedAt(): ?\DateTimeInterface
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(?\DateTimeInterface $deletedAt): self
+    {
+        $this->deletedAt = $deletedAt;
+        return $this;
+    }
+
+    public function isDeleted(): bool
+    {
+        return $this->deletedAt !== null;
     }
 
     #[ORM\PrePersist]
