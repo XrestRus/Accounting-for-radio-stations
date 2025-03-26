@@ -81,6 +81,23 @@ Accounting for radio stations
 ![](https://github.com/XrestRus/Accounting-for-radio-stations/blob/master/context/12.login.png)
 </details> 
 
+<details >
+    <summary>Отчеты</summary>
+
+![](https://github.com/XrestRus/Accounting-for-radio-stations/blob/master/context/15.reports.png)
+</details> 
+
+<details >
+    <summary>Управление пользователями</summary>
+
+![](https://github.com/XrestRus/Accounting-for-radio-stations/blob/master/context/16.users.png)
+</details> 
+
+<details >
+    <summary>Добавление пользователя</summary>
+
+![](https://github.com/XrestRus/Accounting-for-radio-stations/blob/master/context/17.user-add.png)
+</details> 
 
 # Лог эксперимента
 
@@ -92,6 +109,7 @@ Accounting for radio stations
 - день 6 (1.2ч): первичные модели в БД, страница списка устройств и формы добавления и редактирования устройств
 - день 7 (1.3ч): доработка списка устройств, формы возврата и выдачи устройств
 - день 8 (1.2ч): список сотрудников и журнал учета, форма входа, добавление и редактирование сотрудников, размещение на продакшене
+- день 9 (1.2ч): экран отчетов, экран управления пользователями, главный экран (Dashboard)
 
 # Запуск проекта с использованием Docker
 
