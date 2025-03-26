@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Отчеты{% endblock %}
+
+{% block body %}
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Формирование отчетов</h5>
+        </div>
+        <div class="card-body">
+            <form id="reportForm" method="get" action="{{ path('app_reports') }}">
+                <div class="mb-3">
+                    <label for="reportType" class="form-label">Тип отчета:</label>
+                    <select class="form-select" id="reportType" name="reportType" required>
+                        <option value="" {% if reportType is empty %}selected{% endif %}>Выберите тип отчета</option>
+                        <option value="issued" {% if reportType == 'issued' %}selected{% endif %}>По выданным устройствам</option>
+                        <option value="returned" {% if reportType == 'returned' %}selected{% endif %}>По возвращенным устройствам</option>
+                        <option value="overdue" {% if reportType == 'overdue' %}selected{% endif %}>По просроченным возвратам</option>
+                    </select>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="dateFrom" class="form-label">Дата начала:</label>
+                            <input type="date" class="form-control" id="dateFrom" name="dateFrom" value="{{ dateFrom }}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="dateTo" class="form-label">Дата окончания:</label>
+                            <input type="date" class="form-control" id="dateTo" name="dateTo" value="{{ dateTo }}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-primary">Сформировать отчет</button>
+                    <button type="submit" name="export" value="1" class="btn btn-success">
+                        <i class="bi bi-file-excel me-2"></i>Экспорт в Excel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Проверка формы перед отправкой
+        document.getElementById('reportForm').addEventListener('submit', function(event) {
+            const reportType = document.getElementById('reportType').value;
+            if (!reportType) {
+                event.preventDefault();
+                alert('Пожалуйста, выберите тип отчета');
+            }
+        });
+    });
+</script>
+{% endblock %} 

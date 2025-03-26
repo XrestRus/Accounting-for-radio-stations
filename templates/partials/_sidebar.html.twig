@@ -28,6 +28,11 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a href="{{ path('app_reports') }}" class="nav-link {{ app.request.get('_route') == 'app_reports' ? 'active' : '' }}">
+                    <i class="bi bi-file-earmark-bar-graph"></i> Отчеты
+                </a>
+            </li>
+            <li class="nav-item">
                 <a href="{{ path('app_employee') }}" class="nav-link {{ app.request.get('_route') == 'app_employee' ? 'active' : '' }}">
                     <i class="bi bi-people"></i> Сотрудники
                 </a>

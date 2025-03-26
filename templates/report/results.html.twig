@@ -1,0 +1,102 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Отчет: ' ~ reportType }}{% endblock %}
+
+{% block body %}
+
+<div class="container-fluid mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                {% if reportType == 'issued' %}
+                    Отчет по выданным устройствам
+                {% elseif reportType == 'returned' %}
+                    Отчет по возвращенным устройствам
+                {% elseif reportType == 'overdue' %}
+                    Отчет по просроченным возвратам
+                {% else %}
+                    Отчет
+                {% endif %}
+            </h5>
+            <div>
+                <a href="{{ path('app_reports') }}" class="btn btn-sm btn-light me-2">
+                    <i class="bi bi-arrow-left me-1"></i>Назад
+                </a>
+                <a href="{{ path('app_reports', {'reportType': reportType, 'dateFrom': dateFrom, 'dateTo': dateTo, 'export': 1}) }}" class="btn btn-sm btn-success">
+                    <i class="bi bi-file-excel me-1"></i>Экспорт в Excel
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            {% if dateFrom or dateTo %}
+                <div class="mb-3">
+                    <strong>Период:</strong>
+                    {% if dateFrom and dateTo %}
+                        с {{ dateFrom }} по {{ dateTo }}
+                    {% elseif dateFrom %}
+                        с {{ dateFrom }}
+                    {% elseif dateTo %}
+                        по {{ dateTo }}
+                    {% endif %}
+                </div>
+            {% endif %}
+            
+            {% if reportData is empty %}
+                <div class="alert alert-info">
+                    Нет данных для отображения
+                </div>
+            {% else %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>ID</th>
+                                <th>Дата и время</th>
+                                <th>Тип операции</th>
+                                <th>Устройство</th>
+                                <th>Серийный номер</th>
+                                <th>Сотрудник</th>
+                                <th>Срок возврата</th>
+                                <th>Статус</th>
+                                <th>Ответственный</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in reportData %}
+                                <tr>
+                                    <td>{{ item.id }}</td>
+                                    <td>{{ item.date }}</td>
+                                    <td>
+                                        <span class="badge {{ item.typeClass }}">{{ item.type }}</span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ path('app_device_edit', {'id': item.deviceId}) }}">
+                                            {{ item.device }}
+                                        </a>
+                                    </td>
+                                    <td>{{ item.serialNumber }}</td>
+                                    <td>
+                                        <a href="{{ path('app_employee_edit', {'id': item.employeeId}) }}">
+                                            {{ item.employee }}
+                                        </a>
+                                    </td>
+                                    <td>{{ item.dueDate }}</td>
+                                    <td>
+                                        <span class="badge {{ item.statusClass }}">{{ item.status }}</span>
+                                    </td>
+                                    <td>{{ item.issuedBy }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="mt-3">
+                    <strong>Всего записей:</strong> {{ reportData|length }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %} 
