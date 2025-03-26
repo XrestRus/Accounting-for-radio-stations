@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Учет радиостанций - Просмотр пользователя{% endblock %}
+
+{% block body %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Просмотр пользователя</h1>
+        <a href="{{ path('app_user_index') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Вернуться к списку
+        </a>
+    </div>
+
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <!-- Информация о пользователе -->
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Основная информация</h4>
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <th>ID</th>
+                                <td>{{ user.id }}</td>
+                            </tr>
+                            <tr>
+                                <th>Имя пользователя</th>
+                                <td>{{ user.username }}</td>
+                            </tr>
+                            <tr>
+                                <th>Роль</th>
+                                <td>
+                                    {% if user.role == 'ROLE_ADMIN' %}
+                                        <span class="badge bg-danger role-badge">Администратор</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary role-badge">Оператор</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Депо</th>
+                                <td>{{ user.depot ? user.depot.name : 'Не указано' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <h4>Системная информация</h4>
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <th>Дата создания</th>
+                                <td>{{ user.createdAt|date('d.m.Y H:i') }}</td>
+                            </tr>
+                            <tr>
+                                <th>Последнее обновление</th>
+                                <td>{{ user.updatedAt ? user.updatedAt|date('d.m.Y H:i') : 'Не обновлялся' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Последний вход</th>
+                                <td>{{ user.lastLoginAt ? user.lastLoginAt|date('d.m.Y H:i') : 'Никогда' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <div>
+                    <form method="post" action="{{ path('app_user_delete', {'id': user.id}) }}" onsubmit="return confirm('Вы уверены, что хотите удалить этого пользователя?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                        <button type="submit" class="btn btn-danger">Удалить</button>
+                    </form>
+                </div>
+                <div>
+                    <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-primary">Редактировать</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

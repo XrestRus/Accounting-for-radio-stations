@@ -32,6 +32,13 @@
                     <i class="bi bi-people"></i> Сотрудники
                 </a>
             </li>
+            {% if is_granted('ROLE_ADMIN') %}
+            <li class="nav-item">
+                <a href="{{ path('app_user_index') }}" class="nav-link {{ app.request.get('_route') starts with 'app_user' ? 'active' : '' }}">
+                    <i class="bi bi-person-gear"></i> Управление пользователями
+                </a>
+            </li>
+            {% endif %}
             <li class="nav-item">
                 <a href="{{ path('app_settings') }}" class="nav-link {{ app.request.get('_route') == 'app_settings' ? 'active' : '' }}">
                     <i class="bi bi-gear"></i> Настройки
