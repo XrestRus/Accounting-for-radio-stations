@@ -6,11 +6,11 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div class="d-flex align-items-center">
         <h1 class="mb-0 me-3">Панель управления</h1>
-        <span class="text-muted">Последнее обновление: сегодня, 10:15</span>
+        <span class="text-muted">Последнее обновление: {{ last_update }}</span>
     </div>
-    <button type="button" class="btn btn-sm btn-outline-secondary">
+    <a href="{{ path('app_dashboard') }}" class="btn btn-sm btn-outline-secondary">
         <i class="bi bi-arrow-clockwise"></i> Обновить
-    </button>
+    </a>
 </div>
 
 <!-- Статистика -->
@@ -21,17 +21,14 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="card-subtitle mb-1 text-muted">Всего устройств</h6>
-                        <div class="stat-number">124</div>
+                        <div class="stat-number">{{ total_devices }}</div>
                     </div>
                     <div class="stat-icon">
                         <i class="bi bi-device-hdd"></i>
                     </div>
                 </div>
                 <div class="mt-2 small">
-                    <span class="text-success">
-                        <i class="bi bi-arrow-up"></i> 5%
-                    </span>
-                    <span class="text-muted ms-2">с прошлого месяца</span>
+                    <span class="text-muted">Общее количество устройств в системе</span>
                 </div>
             </div>
         </div>
@@ -42,17 +39,14 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="card-subtitle mb-1 text-muted">Доступно</h6>
-                        <div class="stat-number">87</div>
+                        <div class="stat-number">{{ available_devices }}</div>
                     </div>
                     <div class="stat-icon">
                         <i class="bi bi-check-circle"></i>
                     </div>
                 </div>
                 <div class="mt-2 small">
-                    <span class="text-success">
-                        <i class="bi bi-arrow-up"></i> 3%
-                    </span>
-                    <span class="text-muted ms-2">с прошлого месяца</span>
+                    <span class="text-muted">Устройства, доступные для выдачи</span>
                 </div>
             </div>
         </div>
@@ -63,17 +57,14 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="card-subtitle mb-1 text-muted">Выдано</h6>
-                        <div class="stat-number">32</div>
+                        <div class="stat-number">{{ issued_devices }}</div>
                     </div>
                     <div class="stat-icon">
                         <i class="bi bi-box-arrow-right"></i>
                     </div>
                 </div>
                 <div class="mt-2 small">
-                    <span class="text-danger">
-                        <i class="bi bi-arrow-up"></i> 12%
-                    </span>
-                    <span class="text-muted ms-2">с прошлого месяца</span>
+                    <span class="text-muted">Устройства, выданные сотрудникам</span>
                 </div>
             </div>
         </div>
@@ -84,17 +75,14 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="card-subtitle mb-1 text-muted">Просрочено</h6>
-                        <div class="stat-number">5</div>
+                        <div class="stat-number">{{ overdue_devices }}</div>
                     </div>
                     <div class="stat-icon">
                         <i class="bi bi-exclamation-triangle"></i>
                     </div>
                 </div>
                 <div class="mt-2 small">
-                    <span class="text-danger">
-                        <i class="bi bi-arrow-up"></i> 2%
-                    </span>
-                    <span class="text-muted ms-2">с прошлого месяца</span>
+                    <span class="text-muted">Устройства с истекшим сроком возврата</span>
                 </div>
             </div>
         </div>
@@ -147,7 +135,7 @@
                 </div>
                 <h5 class="card-title">Просроченные</h5>
                 <p class="card-text small mb-3">Устройства с истекшим сроком</p>
-                <a href="#" class="btn btn-warning text-dark btn-sm">Просмотр</a>
+                <a href="{{ path('app_journal') }}?status=overdue" class="btn btn-warning text-dark btn-sm">Просмотр</a>
             </div>
         </div>
     </div>
@@ -162,36 +150,30 @@
                 <a href="{{ path('app_journal') }}" class="btn btn-sm btn-outline-primary">Все записи</a>
             </div>
             <div class="card-body p-0">
-                <div class="recent-activity-item px-3">
-                    <div class="recent-activity-time">Сегодня, 10:15</div>
-                    <div class="mt-1 small">
-                        <strong>Администратор</strong> выдал устройство <strong>Радиостанция АК-9</strong> сотруднику <strong>Иванов И.И.</strong>
-                    </div>
+                {% if recent_transactions is empty %}
+                <div class="p-3 text-center text-muted">
+                    Нет недавних операций
                 </div>
-                <div class="recent-activity-item px-3">
-                    <div class="recent-activity-time">Сегодня, 09:30</div>
-                    <div class="mt-1 small">
-                        <strong>Оператор</strong> принял устройство <strong>ТСКБМ-Н</strong> от сотрудника <strong>Петров П.П.</strong>
+                {% else %}
+                    {% for transaction in recent_transactions %}
+                    <div class="recent-activity-item px-3">
+                        <div class="recent-activity-time">
+                            {% if transaction.returnedAt %}
+                                {{ transaction.returnedAt|date('d.m.Y, H:i') }}
+                            {% else %}
+                                {{ transaction.issuedAt|date('d.m.Y, H:i') }}
+                            {% endif %}
+                        </div>
+                        <div class="mt-1 small">
+                            {% if transaction.returnedAt %}
+                                <strong>{{ transaction.issuedBy.username }}</strong> принял устройство <strong>{{ transaction.device.name }}</strong> от сотрудника <strong>{{ transaction.employee.fullName }}</strong>
+                            {% else %}
+                                <strong>{{ transaction.issuedBy.username }}</strong> выдал устройство <strong>{{ transaction.device.name }}</strong> сотруднику <strong>{{ transaction.employee.fullName }}</strong>
+                            {% endif %}
+                        </div>
                     </div>
-                </div>
-                <div class="recent-activity-item px-3">
-                    <div class="recent-activity-time">Вчера, 16:45</div>
-                    <div class="mt-1 small">
-                        <strong>Менеджер</strong> добавил новое устройство <strong>Радиостанция РВ-1.1М</strong>
-                    </div>
-                </div>
-                <div class="recent-activity-item px-3">
-                    <div class="recent-activity-time">Вчера, 14:20</div>
-                    <div class="mt-1 small">
-                        <strong>Администратор</strong> обновил информацию о сотруднике <strong>Козлова А.А.</strong>
-                    </div>
-                </div>
-                <div class="recent-activity-item px-3">
-                    <div class="recent-activity-time">Вчера, 11:05</div>
-                    <div class="mt-1 small">
-                        <strong>Оператор</strong> выдал устройство <strong>МПМЭ-128</strong> сотруднику <strong>Новиков В.М.</strong>
-                    </div>
-                </div>
+                    {% endfor %}
+                {% endif %}
             </div>
         </div>
     </div>
@@ -201,9 +183,14 @@
         <div class="card h-100">
             <div class="card-header d-flex justify-content-between align-items-center bg-danger text-white">
                 <h5 class="mb-0">Просроченные устройства</h5>
-                <span class="badge bg-light text-danger">5 устройств</span>
+                <span class="badge bg-light text-danger">{{ overdue_devices }} {% if overdue_devices == 1 %}устройство{% elseif overdue_devices > 1 and overdue_devices < 5 %}устройства{% else %}устройств{% endif %}</span>
             </div>
             <div class="card-body p-0">
+                {% if overdue_transactions is empty %}
+                <div class="p-3 text-center text-muted">
+                    Нет просроченных устройств
+                </div>
+                {% else %}
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>
@@ -216,64 +203,35 @@
                             </tr>
                         </thead>
                         <tbody>
+                            {% for transaction in overdue_transactions %}
+                            {% set days = date('now').diff(transaction.dueDate).days %}
                             <tr>
-                                <td>Носитель КР</td>
-                                <td>Сидоров С.С.</td>
-                                <td>04.10.2023</td>
-                                <td>1 день</td>
+                                <td>{{ transaction.device.name }}</td>
+                                <td>{{ transaction.employee.fullName }}</td>
+                                <td>{{ transaction.dueDate|date('d.m.Y') }}</td>
                                 <td>
-                                    <button type="button" class="btn btn-sm btn-outline-primary">
+                                    {{ days }} 
+                                    {% if days == 1 %}
+                                        день
+                                    {% elseif days > 1 and days < 5 %}
+                                        дня
+                                    {% else %}
+                                        дней
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if transaction.employee.phone %}
+                                    <a href="tel:{{ transaction.employee.phone }}" class="btn btn-sm btn-outline-primary">
                                         <i class="bi bi-telephone"></i>
-                                    </button>
+                                    </a>
+                                    {% endif %}
                                 </td>
                             </tr>
-                            <tr>
-                                <td>Радиостанция РВ-1.1М</td>
-                                <td>Козлова А.А.</td>
-                                <td>03.10.2023</td>
-                                <td>2 дня</td>
-                                <td>
-                                    <button type="button" class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-telephone"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>ТСКБМ-Н</td>
-                                <td>Петров П.П.</td>
-                                <td>01.10.2023</td>
-                                <td>4 дня</td>
-                                <td>
-                                    <button type="button" class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-telephone"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Радиостанция АК-9</td>
-                                <td>Иванов И.И.</td>
-                                <td>30.09.2023</td>
-                                <td>5 дней</td>
-                                <td>
-                                    <button type="button" class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-telephone"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>МПМЭ-128</td>
-                                <td>Новиков В.М.</td>
-                                <td>28.09.2023</td>
-                                <td>7 дней</td>
-                                <td>
-                                    <button type="button" class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-telephone"></i>
-                                    </button>
-                                </td>
-                            </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>
