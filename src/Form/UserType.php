@@ -73,7 +73,7 @@ class UserType extends AbstractType
                 'label' => 'Роль',
                 'choices' => [
                     'Администратор' => 'ROLE_ADMIN',
-                    'Оператор' => 'ROLE_USER',
+                    'Оператор' => 'ROLE_OPERATOR',
                 ],
                 'attr' => ['class' => 'form-select'],
                 'constraints' => [

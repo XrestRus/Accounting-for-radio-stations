@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 /**
  * Контроллер для управления пользователями системы
@@ -35,8 +36,8 @@ class UserController extends AbstractController
     /**
      * Создает нового пользователя
      */
-    #[Route('/new', name: 'app_user_new', methods: ['GET', 'POST'])]
-    public function new(
+    #[Route('/add', name: 'app_user_add', methods: ['GET', 'POST'])]
+    public function add(
         Request $request, 
         UserPasswordHasherInterface $passwordHasher, 
         EntityManagerInterface $entityManager
@@ -62,7 +63,7 @@ class UserController extends AbstractController
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('user/new.html.twig', [
+        return $this->render('user/add.html.twig', [
             'user' => $user,
             'form' => $form->createView(),
         ]);
@@ -72,9 +73,15 @@ class UserController extends AbstractController
      * Отображает информацию о конкретном пользователе
      */
     #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
-    public function show(User $user): Response
+    public function show(int $id, UserRepository $userRepository): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        
+        $user = $userRepository->find($id);
+        
+        if (!$user) {
+            throw $this->createNotFoundException('Пользователь не найден');
+        }
         
         return $this->render('user/show.html.twig', [
             'user' => $user,
@@ -86,12 +93,19 @@ class UserController extends AbstractController
      */
     #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
     public function edit(
-        Request $request, 
-        User $user, 
+        Request $request,
+        int $id, 
+        UserRepository $userRepository,
         UserPasswordHasherInterface $passwordHasher, 
         EntityManagerInterface $entityManager
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        
+        $user = $userRepository->find($id);
+        
+        if (!$user) {
+            throw $this->createNotFoundException('Пользователь не найден');
+        }
         
         $form = $this->createForm(UserType::class, $user, [
             'require_password' => false,
@@ -125,9 +139,19 @@ class UserController extends AbstractController
      * Удаляет пользователя
      */
     #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
-    public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
-    {
+    public function delete(
+        Request $request, 
+        int $id,
+        UserRepository $userRepository,
+        EntityManagerInterface $entityManager
+    ): Response {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        
+        $user = $userRepository->find($id);
+        
+        if (!$user) {
+            throw $this->createNotFoundException('Пользователь не найден');
+        }
         
         if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
             // Проверяем, не удаляет ли пользователь сам себя

@@ -1,0 +1,120 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Учет радиостанций - Добавление пользователя{% endblock %}
+
+{% block body %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Добавление пользователя</h1>
+        <a href="{{ path('app_user_index') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Вернуться к списку
+        </a>
+    </div>
+
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <!-- Форма добавления пользователя -->
+    <div class="card">
+        <div class="card-body">
+            {{ form_start(form) }}
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h4>Основная информация</h4>
+                        <div class="mb-3">
+                            {{ form_label(form.username, 'Имя пользователя', {'label_attr': {'class': 'form-label required-field'}}) }}
+                            {{ form_widget(form.username) }}
+                            {{ form_errors(form.username) }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>Настройки аккаунта</h4>
+                        <div class="mb-3">
+                            {{ form_label(form.role, 'Роль', {'label_attr': {'class': 'form-label required-field'}}) }}
+                            {{ form_widget(form.role) }}
+                            {{ form_errors(form.role) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_label(form.depot, 'Депо', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.depot) }}
+                            {{ form_errors(form.depot) }}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h4>Пароль</h4>
+                        <div class="mb-3">
+                            {{ form_label(form.password.first, 'Пароль', {'label_attr': {'class': 'form-label required-field'}}) }}
+                            {{ form_widget(form.password.first) }}
+                            {{ form_errors(form.password.first) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_label(form.password.second, 'Подтверждение пароля', {'label_attr': {'class': 'form-label required-field'}}) }}
+                            {{ form_widget(form.password.second) }}
+                            {{ form_errors(form.password.second) }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> Поля, отмеченные <span class="text-danger">*</span>, обязательны для заполнения.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{{ path('app_user_index') }}" class="btn btn-secondary">Отмена</a>
+                    <div>
+                        <button type="reset" class="btn btn-outline-secondary me-2">Сбросить</button>
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                    </div>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Добавляем кнопки показа/скрытия паролей
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordFields = document.querySelectorAll('input[type="password"]');
+            
+            passwordFields.forEach(function(field) {
+                // Создаем контейнер для поля ввода
+                const inputGroup = document.createElement('div');
+                inputGroup.className = 'input-group';
+                
+                // Помещаем поле ввода в контейнер
+                field.parentNode.insertBefore(inputGroup, field);
+                inputGroup.appendChild(field);
+                
+                // Добавляем кнопку показа/скрытия пароля
+                const toggleButton = document.createElement('span');
+                toggleButton.className = 'input-group-text password-toggle';
+                toggleButton.innerHTML = '<i class="bi bi-eye"></i>';
+                toggleButton.addEventListener('click', function() {
+                    if (field.type === 'password') {
+                        field.type = 'text';
+                        toggleButton.querySelector('i').className = 'bi bi-eye-slash';
+                    } else {
+                        field.type = 'password';
+                        toggleButton.querySelector('i').className = 'bi bi-eye';
+                    }
+                });
+                
+                inputGroup.appendChild(toggleButton);
+            });
+        });
+    </script>
+{% endblock %} 

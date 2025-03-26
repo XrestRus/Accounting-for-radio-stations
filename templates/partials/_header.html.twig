@@ -7,7 +7,7 @@
         <ul class="navbar-nav ms-auto">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
-                    <i class="bi bi-person-circle"></i> Администратор
+                    <i class="bi bi-person-circle"></i> {{ app.user ? app.user.username : 'Гость' }}
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li><a class="dropdown-item" href="#">Профиль</a></li>
