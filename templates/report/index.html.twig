@@ -4,15 +4,16 @@
 
 {% block body %}
 
-<div class="container mt-4">
-    <div class="card">
-        <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">Формирование отчетов</h5>
-        </div>
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Отчеты</h2>
+    </div>
+
+    <div class="card mb-4">
         <div class="card-body">
-            <form id="reportForm" method="get" action="{{ path('app_reports') }}">
-                <div class="mb-3">
-                    <label for="reportType" class="form-label">Тип отчета:</label>
+            <form id="reportForm" method="get" action="{{ path('app_reports') }}" class="row g-3">
+                <div class="col-md-4">
+                    <label for="reportType" class="form-label">Тип отчета</label>
                     <select class="form-select" id="reportType" name="reportType" required>
                         <option value="" {% if reportType is empty %}selected{% endif %}>Выберите тип отчета</option>
                         <option value="issued" {% if reportType == 'issued' %}selected{% endif %}>По выданным устройствам</option>
@@ -21,23 +22,21 @@
                     </select>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="dateFrom" class="form-label">Дата начала:</label>
-                            <input type="date" class="form-control" id="dateFrom" name="dateFrom" value="{{ dateFrom }}">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="dateTo" class="form-label">Дата окончания:</label>
-                            <input type="date" class="form-control" id="dateTo" name="dateTo" value="{{ dateTo }}">
-                        </div>
-                    </div>
+                <div class="col-md-3">
+                    <label for="dateFrom" class="form-label">Дата начала</label>
+                    <input type="date" class="form-control" id="dateFrom" name="dateFrom" value="{{ dateFrom }}">
                 </div>
 
-                <div class="d-flex justify-content-between">
-                    <button type="submit" class="btn btn-primary">Сформировать отчет</button>
+                <div class="col-md-3">
+                    <label for="dateTo" class="form-label">Дата окончания</label>
+                    <input type="date" class="form-control" id="dateTo" name="dateTo" value="{{ dateTo }}">
+                </div>
+
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-danger w-100">Применить</button>
+                </div>
+                
+                <div class="col-12 mt-3 text-end">
                     <button type="submit" name="export" value="1" class="btn btn-success">
                         <i class="bi bi-file-excel me-2"></i>Экспорт в Excel
                     </button>
