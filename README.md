@@ -113,6 +113,13 @@ Accounting for radio stations
 
 # Запуск проекта с использованием Docker
 
+## Требования к системе
+
+- Docker и Docker Compose (актуальные версии)
+- Git
+- Минимум 2 ГБ свободной оперативной памяти
+- Минимум 1 ГБ свободного места на диске
+
 ## Быстрый старт
 
 1. Клонируйте репозиторий:
@@ -126,12 +133,23 @@ Accounting for radio stations
    docker-compose up -d --build
    ```
 
-3. Приложение будет доступно по адресу:
+3. Установите зависимости и инициализируйте проект:
+   ```
+   docker-compose exec php composer install
+   docker-compose exec php bin/console doctrine:migrations:migrate --no-interaction
+   docker-compose exec php bin/console doctrine:fixtures:load --no-interaction
+   ```
+
+4. Приложение будет доступно по адресу:
    ```
    http://localhost:8080
    ```
 
-4. Для доступа к Adminer (управление БД):
+5. Данные для входа (после загрузки фикстур):
+   - Администратор: admin@example.com / password
+   - Оператор: operator@example.com / password
+
+6. Для доступа к Adminer (управление БД):
    ```
    http://localhost:8181
    ```
@@ -140,17 +158,126 @@ Accounting for radio stations
    - Пароль: app_password
    - База данных: app
 
-## Остановка проекта
+## Управление проектом
 
+### Остановка проекта
 ```
 docker-compose down
 ```
 
-## Пересборка контейнеров
+### Перезапуск проекта
+```
+docker-compose restart
+```
 
+### Пересборка контейнеров
 Если вы внесли изменения в Docker-конфигурацию, выполните:
 ```
-./docker-rebuild.sh
+docker-compose down
+docker-compose up -d --build
 ```
 
+### Просмотр логов
+```
+docker-compose logs -f
+docker-compose logs -f php  # логи только PHP-контейнера
+```
+
+### Доступ к контейнерам
+```
+docker-compose exec php bash  # доступ к PHP-контейнеру
+docker-compose exec database mysql -uapp -papp_password app  # доступ к MySQL
+```
+
+## Конфигурация окружения
+
+Настройки проекта хранятся в файлах `.env` и `.env.local`. Для продакшн-окружения рекомендуется:
+
+1. Создать файл `.env.local` с переопределением настроек:
+   ```
+   APP_ENV=prod
+   APP_SECRET=ваш_секретный_ключ
+   DATABASE_URL=mysql://app:app_password@database:3306/app?serverVersion=8.0&charset=utf8mb4
+   ```
+
+2. Для продакшн-сервера необходимо выполнить:
+   ```
+   docker-compose exec php composer dump-env prod
+   docker-compose exec php composer install --no-dev --optimize-autoloader
+   ```
+
+## Развертывание на продакшен-сервере
+
+1. Клонируйте репозиторий на ваш продакшн-сервер:
+   ```
+   git clone https://github.com/XrestRus/Accounting-for-radio-stations.git
+   cd Accounting-for-radio-stations
+   ```
+
+2. Создайте файл `.env.local` с настройками для продакшена:
+   ```
+   APP_ENV=prod
+   APP_SECRET=ваш_уникальный_секретный_ключ
+   DATABASE_URL=mysql://ваш_пользователь:ваш_пароль@localhost:3306/ваша_база?serverVersion=8.0&charset=utf8mb4
+   ```
+
+3. Запустите контейнеры в продакшн-режиме:
+   ```
+   docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+   ```
+
+4. Инициализируйте проект:
+   ```
+   docker-compose exec php composer install --no-dev --optimize-autoloader
+   docker-compose exec php bin/console doctrine:migrations:migrate --no-interaction
+   docker-compose exec php bin/console assets:install
+   ```
+
+5. Настройте Nginx (или другой веб-сервер) для проксирования запросов в контейнер.
+
+6. Настройте SSL с помощью Let's Encrypt для безопасного соединения.
+
+7. Для обновления системы используйте:
+   ```
+   git pull
+   docker-compose exec php composer install --no-dev --optimize-autoloader
+   docker-compose exec php bin/console doctrine:migrations:migrate --no-interaction
+   docker-compose exec php bin/console cache:clear
+   docker-compose restart php
+   ```
+
 Более подробная информация о Docker-инфраструктуре проекта доступна в [docker/README.md](docker/README.md).
+
+# Unit тестирование
+
+В проекте реализованы unit-тесты для проверки корректности работы ключевых классов. Для запуска тестов следуйте инструкции:
+
+## Запуск всех тестов
+
+```bash
+docker-compose exec php php ./bin/phpunit
+```
+
+## Запуск определенного теста или группы тестов
+
+Для запуска конкретного теста используйте параметр `--filter`:
+
+```bash
+docker-compose exec php php ./bin/phpunit --filter=DeviceTest
+```
+
+## Создание новых тестов
+
+1. Создайте файл теста в директории `tests/` с соответствующим namespace и суффиксом `Test`.
+2. Для классов-сущностей (Entity) создавайте тесты в `tests/Entity/`.
+3. Для контроллеров создавайте тесты в `tests/Controller/`.
+
+## Покрытие кода тестами
+
+Для генерации отчета о покрытии кода тестами выполните:
+
+```bash
+docker-compose exec php php ./bin/phpunit --coverage-html var/coverage
+```
+
+После выполнения команды отчет будет доступен в директории `var/coverage/`.
