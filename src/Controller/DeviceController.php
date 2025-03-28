@@ -7,6 +7,7 @@ use App\Entity\StatusEnum;
 use App\Form\DeviceType;
 use App\Repository\DeviceRepository;
 use App\Repository\TransactionRepository;
+use App\Repository\LogRepository;
 use App\Service\LogService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,6 +28,7 @@ class DeviceController extends AbstractController
     private LogService $logService;
     private SluggerInterface $slugger;
     private string $deviceImagesDirectory;
+    private LogRepository $logRepository;
 
     public function __construct(
         DeviceRepository $deviceRepository,
@@ -34,6 +36,7 @@ class DeviceController extends AbstractController
         TransactionRepository $transactionRepository,
         LogService $logService,
         SluggerInterface $slugger,
+        LogRepository $logRepository,
         string $deviceImagesDirectory = 'uploads/device_images'
     ) {
         $this->deviceRepository = $deviceRepository;
@@ -42,6 +45,7 @@ class DeviceController extends AbstractController
         $this->logService = $logService;
         $this->slugger = $slugger;
         $this->deviceImagesDirectory = $deviceImagesDirectory;
+        $this->logRepository = $logRepository;
     }
 
     #[Route('/devices', name: 'app_device')]
@@ -89,6 +93,19 @@ class DeviceController extends AbstractController
                 }
             }
             
+            // Получаем логи для устройства
+            $deviceLogs = $this->logRepository->findByDevice($device->getId());
+            $formattedLogs = [];
+            
+            foreach ($deviceLogs as $log) {
+                $formattedLogs[] = [
+                    'action' => $log->getAction(),
+                    'details' => $log->getDetails(),
+                    'username' => $log->getUser()->getUsername(),
+                    'timestamp' => $log->getTimestamp()->format('d.m.Y H:i:s')
+                ];
+            }
+            
             return [
                 'id' => $device->getId(),
                 'name' => $device->getName(),
@@ -110,6 +127,7 @@ class DeviceController extends AbstractController
                 'dueDate' => $activeTransaction ? $activeTransaction->getDueDate()->format('d.m.Y') : null,
                 'isOverdue' => $isOverdue,
                 'imageName' => $device->getImageName(),
+                'logs' => $formattedLogs
             ];
         }, $devices);
         

@@ -186,6 +186,24 @@
                         <h6>Изображение устройства</h6>
                         <img id="deviceImage" src="" alt="Изображение устройства" class="img-fluid">
                     </div>
+                    <div class="col-12 mt-3">
+                        <hr>
+                        <h6>История устройства</h6>
+                        <div id="deviceLogs" class="table-responsive">
+                            <table class="table table-striped table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Дата/время</th>
+                                        <th>Действие</th>
+                                        <th>Пользователь</th>
+                                        <th>Подробности</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="deviceLogsBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -288,6 +306,42 @@
             
             // Обновляем ссылку на редактирование
             document.getElementById('deviceEditLink').href = '{{ path("app_device_edit", {"id": "DEVICE_ID"}) }}'.replace('DEVICE_ID', device.id);
+            
+            // Заполняем историю устройства (логи)
+            const deviceLogsBody = document.getElementById('deviceLogsBody');
+            deviceLogsBody.innerHTML = '';
+            
+            if (device.logs && device.logs.length > 0) {
+                device.logs.forEach(log => {
+                    const row = document.createElement('tr');
+                    
+                    const timestampCell = document.createElement('td');
+                    timestampCell.textContent = log.timestamp;
+                    row.appendChild(timestampCell);
+                    
+                    const actionCell = document.createElement('td');
+                    actionCell.textContent = log.action;
+                    row.appendChild(actionCell);
+                    
+                    const usernameCell = document.createElement('td');
+                    usernameCell.textContent = log.username;
+                    row.appendChild(usernameCell);
+                    
+                    const detailsCell = document.createElement('td');
+                    detailsCell.textContent = log.details;
+                    row.appendChild(detailsCell);
+                    
+                    deviceLogsBody.appendChild(row);
+                });
+            } else {
+                const row = document.createElement('tr');
+                const cell = document.createElement('td');
+                cell.setAttribute('colspan', '4');
+                cell.textContent = 'Нет данных об операциях с этим устройством';
+                cell.className = 'text-center';
+                row.appendChild(cell);
+                deviceLogsBody.appendChild(row);
+            }
         });
     });
 </script>

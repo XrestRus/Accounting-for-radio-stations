@@ -47,6 +47,7 @@ body > .d-flex {
     height: 56px;
     padding: 0;
     border-bottom: 3px solid var(--rzd-primary);
+    z-index: 1030;
 }
 
 /* RZD Logo and Bonus - Replaced with app title */
@@ -90,6 +91,7 @@ body > .d-flex {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 0;
     margin-top: 3px;
+    z-index: 1031;
 }
 
 .dropdown-item {
@@ -625,4 +627,18 @@ h1 {
 footer {
     color: var(--rzd-dark-gray);
     font-size: 13px;
+}
+
+/* Исправление для выпадающего меню на всех страницах */
+.navbar-nav .dropdown:hover .dropdown-menu,
+.nav-item.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+/* Фикс для модальных окон, чтобы они не перекрывали меню пользователя */
+.modal-backdrop {
+    z-index: 1029;
+}
+.modal {
+    z-index: 1029;
 }

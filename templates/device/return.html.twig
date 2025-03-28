@@ -66,9 +66,14 @@
                     
                     {% if error %}
                         <div class="alert alert-danger mt-3">
-                            {{ error }}
+                            <h5><i class="bi bi-exclamation-triangle"></i> Ошибка</h5>
+                            <p>{{ error }}</p>
                         </div>
                     {% endif %}
+                    <div id="deviceError" class="alert alert-danger mt-3" style="display: none;">
+                        <h5><i class="bi bi-exclamation-triangle"></i> Ошибка</h5>
+                        <p id="deviceErrorMessage"></p>
+                    </div>
                 </div>
             </div>
             
@@ -191,15 +196,18 @@
         }
         
         // Функция для поиска устройства по QR-коду
-        function searchDeviceByQrCode() {
+        window.searchDeviceByQrCode = function() {
             const identifier = document.getElementById('scanQrCode').value.trim();
             if (!identifier) return;
             
             searchDeviceByIdentifier(identifier);
-        }
+        };
         
         // Функция для выполнения AJAX-запроса для получения информации о выданном устройстве
         function searchDeviceByIdentifier(identifier) {
+            // Скрываем блок ошибки (если он был показан)
+            document.getElementById('deviceError').style.display = 'none';
+            
             // Устанавливаем значение в скрытое поле формы
             document.getElementById('deviceIdentifier').value = identifier;
             
@@ -209,7 +217,8 @@
                 .then(data => {
                     // Если получена ошибка, показываем её
                     if (data.error) {
-                        alert(data.error);
+                        document.getElementById('deviceErrorMessage').textContent = data.error;
+                        document.getElementById('deviceError').style.display = 'block';
                         return;
                     }
                     
@@ -236,7 +245,8 @@
                 })
                 .catch(error => {
                     console.error('Ошибка при запросе информации об устройстве:', error);
-                    alert('Произошла ошибка при запросе информации об устройстве');
+                    document.getElementById('deviceErrorMessage').textContent = 'Произошла ошибка при запросе информации об устройстве';
+                    document.getElementById('deviceError').style.display = 'block';
                 });
         }
         
