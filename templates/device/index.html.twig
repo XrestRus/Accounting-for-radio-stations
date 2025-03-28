@@ -86,6 +86,12 @@
                         <td>{% if device.qrCode %}<i class="bi bi-qr-code"></i> {{ device.qrCode }}{% else %}—{% endif %}</td>
                         <td>
                             <span class="badge {{ device.statusBadgeClass }}">{{ device.statusFormatted }}</span>
+                            {% if device.status.value == 'issued' %}
+                                <div class="mt-1 small">Выдано: {{ device.issuedTo }}</div>
+                                {% if device.isOverdue %}
+                                    <span class="badge bg-danger mt-1">Просрочено (до {{ device.dueDate }})</span>
+                                {% endif %}
+                            {% endif %}
                         </td>
                         <td>{{ device.depotName ?? '—' }}</td>
                         <td>{{ device.createdAt|date('d.m.Y') }}</td>
@@ -224,6 +230,22 @@
             badge.className = 'badge ' + device.statusBadgeClass;
             badge.textContent = device.statusFormatted;
             statusElement.appendChild(badge);
+            
+            // Добавляем информацию о том, кому выдано устройство
+            if (device.status.value === 'issued') {
+                const issuedElement = document.createElement('div');
+                issuedElement.className = 'mt-2';
+                issuedElement.innerHTML = '<strong>Выдано:</strong> ' + device.issuedTo;
+                statusElement.appendChild(issuedElement);
+                
+                // Если просрочено
+                if (device.isOverdue) {
+                    const overdueBadge = document.createElement('span');
+                    overdueBadge.className = 'badge bg-danger mt-1 d-block';
+                    overdueBadge.textContent = 'Просрочено (до ' + device.dueDate + ')';
+                    statusElement.appendChild(overdueBadge);
+                }
+            }
             
             // Дополнительная информация
             document.getElementById('deviceDepot').textContent = device.depotName ? device.depotName : '—';

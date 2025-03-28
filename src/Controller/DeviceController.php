@@ -6,6 +6,7 @@ use App\Entity\Device;
 use App\Entity\StatusEnum;
 use App\Form\DeviceType;
 use App\Repository\DeviceRepository;
+use App\Repository\TransactionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,13 +20,16 @@ class DeviceController extends AbstractController
 {
     private DeviceRepository $deviceRepository;
     private EntityManagerInterface $entityManager;
+    private TransactionRepository $transactionRepository;
 
     public function __construct(
         DeviceRepository $deviceRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        TransactionRepository $transactionRepository
     ) {
         $this->deviceRepository = $deviceRepository;
         $this->entityManager = $entityManager;
+        $this->transactionRepository = $transactionRepository;
     }
 
     #[Route('/devices', name: 'app_device')]
@@ -62,6 +66,17 @@ class DeviceController extends AbstractController
         
         // Format devices for display
         $formattedDevices = array_map(function($device) {
+            $activeTransaction = null;
+            $isOverdue = false;
+            
+            // Получаем информацию о текущей активной транзакции для устройства
+            if ($device->getStatus() === StatusEnum::ISSUED) {
+                $activeTransaction = $this->transactionRepository->findActiveByDevice($device->getId());
+                if ($activeTransaction) {
+                    $isOverdue = $activeTransaction->isOverdue();
+                }
+            }
+            
             return [
                 'id' => $device->getId(),
                 'name' => $device->getName(),
@@ -70,8 +85,8 @@ class DeviceController extends AbstractController
                 'serialNumber' => $device->getSerialNumber(),
                 'qrCode' => $device->getQrCode(),
                 'status' => $device->getStatus(),
-                'statusFormatted' => $this->formatDeviceStatus($device->getStatus()),
-                'statusBadgeClass' => $this->getStatusBadgeClass($device->getStatus()),
+                'statusFormatted' => $device->formatStatus(),
+                'statusBadgeClass' => $device->getStatusBadgeClass(),
                 'depot' => $device->getDepot(),
                 'depotName' => $device->getDepot() ? $device->getDepot()->getName() : null,
                 'createdAt' => $device->getCreatedAt()->format('d.m.Y'),
@@ -79,6 +94,9 @@ class DeviceController extends AbstractController
                 'writeOffDate' => $device->getWriteOffDate() ? $device->getWriteOffDate()->format('d.m.Y') : null,
                 'writeOffComment' => $device->getWriteOffComment(),
                 'repairComment' => $device->getRepairComment(),
+                'issuedTo' => $activeTransaction ? $activeTransaction->getEmployee()->getFullName() : null,
+                'dueDate' => $activeTransaction ? $activeTransaction->getDueDate()->format('d.m.Y') : null,
+                'isOverdue' => $isOverdue,
             ];
         }, $devices);
         
@@ -176,34 +194,6 @@ class DeviceController extends AbstractController
             'carrier' => 'Носитель информации',
             'security' => 'Устройство безопасности',
             default => $type,
-        };
-    }
-    
-    /**
-     * Format device status for display
-     */
-    private function formatDeviceStatus(StatusEnum $status): string
-    {
-        return match($status) {
-            StatusEnum::AVAILABLE => 'Доступно',
-            StatusEnum::ISSUED => 'Выдано',
-            StatusEnum::FAULTY => 'Неисправно',
-            StatusEnum::IN_REPAIR => 'В ремонте',
-            StatusEnum::WRITTEN_OFF => 'Списано',
-        };
-    }
-    
-    /**
-     * Get Bootstrap badge class for status
-     */
-    private function getStatusBadgeClass(StatusEnum $status): string
-    {
-        return match($status) {
-            StatusEnum::AVAILABLE => 'bg-success',
-            StatusEnum::ISSUED => 'bg-warning text-dark',
-            StatusEnum::FAULTY => 'bg-danger',
-            StatusEnum::IN_REPAIR => 'bg-info',
-            StatusEnum::WRITTEN_OFF => 'bg-secondary',
         };
     }
 }

@@ -10,9 +10,10 @@
                     <i class="bi bi-person-circle"></i> {{ app.user ? app.user.username : 'Гость' }}
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="#">Профиль</a></li>
+                    {% if is_granted('ROLE_ADMIN') %}
                     <li><a class="dropdown-item" href="{{ path('app_user_index') }}">Управление пользователями</a></li>
                     <li><hr class="dropdown-divider"></li>
+                    {% endif %}
                     <li><a class="dropdown-item" href="{{ path('app_logout') }}">Выход</a></li>
                 </ul>
             </li>

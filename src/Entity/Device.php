@@ -205,6 +205,38 @@ class Device
         return $this->status === self::STATUS_WRITTEN_OFF;
     }
 
+    /**
+     * Форматирует статус устройства для отображения
+     * 
+     * @return string Отформатированный статус
+     */
+    public function formatStatus(): string
+    {
+        return match($this->status) {
+            StatusEnum::AVAILABLE => 'Доступно',
+            StatusEnum::ISSUED => 'Выдано',
+            StatusEnum::FAULTY => 'Неисправно',
+            StatusEnum::IN_REPAIR => 'В ремонте',
+            StatusEnum::WRITTEN_OFF => 'Списано',
+        };
+    }
+    
+    /**
+     * Возвращает класс Bootstrap-бейджа для статуса
+     * 
+     * @return string CSS-класс бейджа статуса
+     */
+    public function getStatusBadgeClass(): string
+    {
+        return match($this->status) {
+            StatusEnum::AVAILABLE => 'bg-success',
+            StatusEnum::ISSUED => 'bg-warning text-dark',
+            StatusEnum::FAULTY => 'bg-danger',
+            StatusEnum::IN_REPAIR => 'bg-info',
+            StatusEnum::WRITTEN_OFF => 'bg-secondary',
+        };
+    }
+
     #[ORM\PrePersist]
     public function prePersist(): void
     {
