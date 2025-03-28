@@ -8,6 +8,7 @@ use App\Entity\Transaction;
 use App\Form\ReturnDeviceType;
 use App\Repository\DeviceRepository;
 use App\Repository\TransactionRepository;
+use App\Service\LogService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,15 +25,18 @@ class ReturnController extends AbstractController
     private DeviceRepository $deviceRepository;
     private TransactionRepository $transactionRepository;
     private EntityManagerInterface $entityManager;
+    private LogService $logService;
 
     public function __construct(
         DeviceRepository $deviceRepository,
         TransactionRepository $transactionRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        LogService $logService
     ) {
         $this->deviceRepository = $deviceRepository;
         $this->transactionRepository = $transactionRepository;
         $this->entityManager = $entityManager;
+        $this->logService = $logService;
     }
 
     /**
@@ -116,6 +120,13 @@ class ReturnController extends AbstractController
             
             // Сохраняем изменения устройства
             $this->entityManager->flush();
+            
+            // Логируем операцию возврата устройства
+            $this->logService->logDeviceReturn(
+                $device,
+                $activeTransaction->getEmployee()->getFullName(),
+                $activeTransaction->getReturnStatus() === Transaction::RETURN_STATUS_RETURNED_OK ? 'Исправно' : 'Неисправно'
+            );
             
             $this->addFlash('success', sprintf(
                 'Устройство "%s" успешно принято от сотрудника "%s"',

@@ -9,6 +9,7 @@ use App\Form\IssueDeviceType;
 use App\Repository\DeviceRepository;
 use App\Repository\EmployeeRepository;
 use App\Repository\TransactionRepository;
+use App\Service\LogService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,17 +27,20 @@ class IssueController extends AbstractController
     private EmployeeRepository $employeeRepository;
     private TransactionRepository $transactionRepository;
     private EntityManagerInterface $entityManager;
+    private LogService $logService;
 
     public function __construct(
         DeviceRepository $deviceRepository,
         EmployeeRepository $employeeRepository,
         TransactionRepository $transactionRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        LogService $logService
     ) {
         $this->deviceRepository = $deviceRepository;
         $this->employeeRepository = $employeeRepository;
         $this->transactionRepository = $transactionRepository;
         $this->entityManager = $entityManager;
+        $this->logService = $logService;
     }
 
     #[Route('/issue', name: 'app_device_issue')]
@@ -121,6 +125,13 @@ class IssueController extends AbstractController
             // Сохраняем изменения в базе данных
             $this->entityManager->persist($transaction);
             $this->entityManager->flush();
+            
+            // Логируем операцию выдачи устройства
+            $this->logService->logDeviceIssue(
+                $device, 
+                $transaction->getEmployee()->getFullName(), 
+                $transaction->getDueDate()
+            );
             
             $this->addFlash('success', sprintf(
                 'Устройство "%s" успешно выдано сотруднику "%s" до %s',

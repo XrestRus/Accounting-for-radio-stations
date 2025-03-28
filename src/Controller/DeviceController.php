@@ -7,11 +7,14 @@ use App\Entity\StatusEnum;
 use App\Form\DeviceType;
 use App\Repository\DeviceRepository;
 use App\Repository\TransactionRepository;
+use App\Service\LogService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 /**
  * Контроллер для управления устройствами
@@ -21,15 +24,24 @@ class DeviceController extends AbstractController
     private DeviceRepository $deviceRepository;
     private EntityManagerInterface $entityManager;
     private TransactionRepository $transactionRepository;
+    private LogService $logService;
+    private SluggerInterface $slugger;
+    private string $deviceImagesDirectory;
 
     public function __construct(
         DeviceRepository $deviceRepository,
         EntityManagerInterface $entityManager,
-        TransactionRepository $transactionRepository
+        TransactionRepository $transactionRepository,
+        LogService $logService,
+        SluggerInterface $slugger,
+        string $deviceImagesDirectory = 'uploads/device_images'
     ) {
         $this->deviceRepository = $deviceRepository;
         $this->entityManager = $entityManager;
         $this->transactionRepository = $transactionRepository;
+        $this->logService = $logService;
+        $this->slugger = $slugger;
+        $this->deviceImagesDirectory = $deviceImagesDirectory;
     }
 
     #[Route('/devices', name: 'app_device')]
@@ -97,6 +109,7 @@ class DeviceController extends AbstractController
                 'issuedTo' => $activeTransaction ? $activeTransaction->getEmployee()->getFullName() : null,
                 'dueDate' => $activeTransaction ? $activeTransaction->getDueDate()->format('d.m.Y') : null,
                 'isOverdue' => $isOverdue,
+                'imageName' => $device->getImageName(),
             ];
         }, $devices);
         
@@ -120,22 +133,62 @@ class DeviceController extends AbstractController
             }
             $originalStatus = $device->getStatus(); // Запоминаем оригинальный статус
             $pageTitle = 'Редактирование устройства';
+            $isNewDevice = false;
         } else {
             $device = new Device();
             $device->setStatus(StatusEnum::AVAILABLE); // Установка статуса по умолчанию для нового устройства
             $originalStatus = StatusEnum::AVAILABLE;
             $pageTitle = 'Добавление устройства';
+            $isNewDevice = true;
         }
         
         $form = $this->createForm(DeviceType::class, $device);
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) {
+            // Обработка загруженного изображения
+            $deviceImageFile = $form->get('deviceImage')->getData();
+            
+            if ($deviceImageFile) {
+                $originalFilename = pathinfo($deviceImageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $this->slugger->slug($originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $deviceImageFile->guessExtension();
+                
+                // Перемещаем файл в директорию для изображений устройств
+                try {
+                    $deviceImageFile->move(
+                        $this->getParameter('device_images_directory'),
+                        $newFilename
+                    );
+                    
+                    // Удаляем старое изображение, если оно существует
+                    $oldImageName = $device->getImageName();
+                    if ($oldImageName) {
+                        $oldImagePath = $this->getParameter('device_images_directory') . '/' . $oldImageName;
+                        if (file_exists($oldImagePath)) {
+                            unlink($oldImagePath);
+                        }
+                    }
+                    
+                    // Сохраняем новое имя файла
+                    $device->setImageName($newFilename);
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Произошла ошибка при загрузке изображения: ' . $e->getMessage());
+                }
+            }
+            
             // Возвращаем оригинальный статус - не даем его изменить через форму
             $device->setStatus($originalStatus);
             
             $this->entityManager->persist($device);
             $this->entityManager->flush();
+            
+            // Логируем операцию
+            if ($isNewDevice) {
+                $this->logService->logDeviceCreate($device);
+            } else {
+                $this->logService->logDeviceEdit($device);
+            }
             
             $this->addFlash('success', 'Устройство успешно сохранено.');
             return $this->redirectToRoute('app_device');
@@ -159,9 +212,20 @@ class DeviceController extends AbstractController
         
         if ($this->isCsrfTokenValid('delete' . $device->getId(), $request->request->get('_token'))) {
             // Изменяем status на "Списано" вместо удаления
+            $oldStatus = $device->getStatus()->value;
             $device->setStatus(StatusEnum::WRITTEN_OFF);
             $device->setWriteOffDate(new \DateTime());
+            
+            $writeOffComment = $request->request->get('writeOffComment');
+            if ($writeOffComment) {
+                $device->setWriteOffComment($writeOffComment);
+            }
+            
             $this->entityManager->flush();
+            
+            // Логируем операцию списания
+            $this->logService->logDeviceWriteOff($device, $writeOffComment);
+            
             $this->addFlash('success', 'Устройство успешно списано.');
         }
         

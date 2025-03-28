@@ -181,6 +181,11 @@
                             <p><strong>Комментарий о ремонте:</strong> <span id="deviceRepairComment"></span></p>
                         </div>
                     </div>
+                    <div class="col-12 mt-3" id="deviceImageContainer" style="display: none;">
+                        <hr>
+                        <h6>Изображение устройства</h6>
+                        <img id="deviceImage" src="" alt="Изображение устройства" class="img-fluid">
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -268,6 +273,17 @@
             } else if (device.status.value === 'in_repair') {
                 repairFields.style.display = 'block';
                 document.getElementById('deviceRepairComment').textContent = device.repairComment || '—';
+            }
+            
+            // Отображение изображения, если оно есть
+            const deviceImageContainer = document.getElementById('deviceImageContainer');
+            const deviceImage = document.getElementById('deviceImage');
+            
+            if (device.imageName) {
+                deviceImage.src = '/uploads/device_images/' + device.imageName;
+                deviceImageContainer.style.display = 'block';
+            } else {
+                deviceImageContainer.style.display = 'none';
             }
             
             // Обновляем ссылку на редактирование

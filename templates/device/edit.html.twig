@@ -39,6 +39,22 @@
                         {{ form_errors(form.qrCode) }}
                         <div class="form-text">Код для быстрого сканирования (если имеется)</div>
                     </div>
+                    <div class="mb-3">
+                        {{ form_label(form.deviceImage, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.deviceImage) }}
+                        {{ form_errors(form.deviceImage) }}
+                        {{ form_help(form.deviceImage) }}
+                        
+                        {% if device.imageName %}
+                            <div class="mt-2">
+                                <p>Текущее изображение:</p>
+                                <img src="{{ asset('uploads/device_images/' ~ device.imageName) }}" 
+                                     alt="Изображение устройства" 
+                                     class="img-thumbnail" 
+                                     style="max-height: 200px;">
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
                 <div class="col-md-6">
                     <h4>Статус и принадлежность</h4>

@@ -48,6 +48,9 @@ class Device
     #[ORM\JoinColumn(nullable: true, options: ['comment' => 'Идентификатор депо, к которому привязано устройство'])]
     private ?Depot $depot = null;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true, options: ['comment' => 'Имя файла изображения устройства'])]
+    private ?string $imageName = null;
+
     #[ORM\Column(type: 'datetime', options: ['comment' => 'Дата и время создания записи'])]
     private \DateTimeInterface $createdAt;
 
@@ -180,29 +183,40 @@ class Device
         return $this;
     }
 
+    public function getImageName(): ?string
+    {
+        return $this->imageName;
+    }
+
+    public function setImageName(?string $imageName): self
+    {
+        $this->imageName = $imageName;
+        return $this;
+    }
+
     public function isAvailable(): bool
     {
-        return $this->status === self::STATUS_AVAILABLE;
+        return $this->status === StatusEnum::AVAILABLE;
     }
 
     public function isIssued(): bool
     {
-        return $this->status === self::STATUS_ISSUED;
+        return $this->status === StatusEnum::ISSUED;
     }
 
     public function isFaulty(): bool
     {
-        return $this->status === self::STATUS_FAULTY;
+        return $this->status === StatusEnum::FAULTY;
     }
 
     public function isInRepair(): bool
     {
-        return $this->status === self::STATUS_IN_REPAIR;
+        return $this->status === StatusEnum::IN_REPAIR;
     }
 
     public function isWrittenOff(): bool
     {
-        return $this->status === self::STATUS_WRITTEN_OFF;
+        return $this->status === StatusEnum::WRITTEN_OFF;
     }
 
     /**
