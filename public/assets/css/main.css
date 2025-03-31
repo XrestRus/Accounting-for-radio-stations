@@ -636,9 +636,9 @@ footer {
 }
 
 /* Фикс для модальных окон, чтобы они не перекрывали меню пользователя */
-.modal-backdrop {
+/* .modal-backdrop {
     z-index: 1029;
 }
 .modal {
     z-index: 1029;
-}
+} */
