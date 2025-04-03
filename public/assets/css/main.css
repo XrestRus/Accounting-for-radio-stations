@@ -150,6 +150,8 @@ body > .d-flex {
 .main-content {
     flex: 1;
     padding: 20px;
+    display: flex;
+    flex-direction:column;
 }
 
 h1 {
@@ -180,7 +182,7 @@ h1 {
 }
 
 .card-body {
-    padding: 15px;
+    padding: 15px 10px 0 10px;
 }
 
 /* Stat Card Styles */

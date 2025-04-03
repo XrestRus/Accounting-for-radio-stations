@@ -16,7 +16,7 @@
 <!-- Статистика -->
 <div class="row g-3 mb-3">
     <div class="col-md-3">
-        <div class="card stat-card stat-card-primary">
+        <div class="card stat-card stat-card-primary" style="border-top: 3px solid var(--bs-primary);">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
@@ -28,8 +28,11 @@
                     </div>
                 </div>
                 <div class="mt-2 small">
-                    <span class="text-muted">Общее количество устройств в системе</span>
+                    <span class="text-muted">Общее количество устройств в системе</span>                             
                 </div>
+                <a href="{{ path('app_journal') }}" class="btn btn-info btn-sm mt-2 text-white">
+                    Просмотреть журнал операций
+                </a>
             </div>
         </div>
     </div>
@@ -48,6 +51,9 @@
                 <div class="mt-2 small">
                     <span class="text-muted">Устройства, доступные для выдачи</span>
                 </div>
+                <a href="{{ path('app_device_issue') }}" class="btn btn-info btn-sm mt-2 text-white">
+                    Выдать устройство
+                </a>
             </div>
         </div>
     </div>
@@ -66,6 +72,9 @@
                 <div class="mt-2 small">
                     <span class="text-muted">Устройства, выданные сотрудникам</span>
                 </div>
+                <a href="{{ path('app_device_return') }}" class="btn btn-info btn-sm mt-2 text-white">
+                    Вернуть устройство
+                </a>
             </div>
         </div>
     </div>
@@ -84,64 +93,15 @@
                 <div class="mt-2 small">
                     <span class="text-muted">Устройства с истекшим сроком возврата</span>
                 </div>
+                <a href="{{ path('app_journal') }}?status=overdue }}" class="btn btn-info btn-sm mt-2 text-white">
+                    Просмотреть просроченные устройства
+                </a>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Быстрые действия -->
-<div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <div class="card dashboard-card text-center" style="border-top: 2px solid var(--bs-primary);">
-            <div class="card-body p-2">
-                <div class="dashboard-icon text-primary mb-1">
-                    <i class="bi bi-box-arrow-right"></i>
-                </div>
-                <h5 class="card-title mb-0">Выдача устройства</h5>
-                <p class="card-text small mb-1">Оформление выдачи устройства</p>
-                <a href="{{ path('app_device_issue') }}" class="btn btn-info btn-sm text-white">Перейти</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card dashboard-card text-center" style="border-top: 2px solid var(--bs-success);">
-            <div class="card-body p-2">
-                <div class="dashboard-icon text-success mb-1">
-                    <i class="bi bi-box-arrow-in-left"></i>
-                </div>
-                <h5 class="card-title mb-0">Возврат устройства</h5>
-                <p class="card-text small mb-1">Оформление возврата устройства</p>
-                <a href="{{ path('app_device_return') }}" class="btn btn-info btn-sm text-white">Перейти</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card dashboard-card text-center" style="border-top: 2px solid var(--bs-info);">
-            <div class="card-body p-2">
-                <div class="dashboard-icon text-info mb-1">
-                    <i class="bi bi-journal-text"></i>
-                </div>
-                <h5 class="card-title mb-0">Журнал учета</h5>
-                <p class="card-text small mb-1">Просмотр истории выдачи устройств</p>
-                <a href="{{ path('app_journal') }}" class="btn btn-info btn-sm text-white">Перейти</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card dashboard-card text-center" style="border-top: 2px solid var(--bs-warning);">
-            <div class="card-body p-2">
-                <div class="dashboard-icon text-warning mb-1">
-                    <i class="bi bi-exclamation-triangle"></i>
-                </div>
-                <h5 class="card-title mb-0">Просроченные</h5>
-                <p class="card-text small mb-1">Устройства с истекшим сроком</p>
-                <a href="{{ path('app_journal') }}?status=overdue" class="btn btn-info btn-sm text-white">Просмотр</a>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row g-3">
+<div class="row g-3" style="flex: 1;">
     <!-- Недавняя активность -->
     <div class="col-md-6">
         <div class="card h-100 border-primary" style="min-height: 350px;">

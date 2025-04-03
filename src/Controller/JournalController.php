@@ -27,7 +27,7 @@ class JournalController extends AbstractController
     }
 
     /**
-     * Отображает журнал учета с фильтрацией
+     * Отображает журнал операций с фильтрацией
      */
     #[Route('/journal', name: 'app_journal')]
     public function index(Request $request): Response
@@ -170,7 +170,7 @@ class JournalController extends AbstractController
     }
 
     /**
-     * Экспортирует журнал учета в Excel
+     * Экспортирует журнал операций в Excel
      */
     #[Route('/journal/export', name: 'app_journal_export')]
     public function export(Request $request): Response
