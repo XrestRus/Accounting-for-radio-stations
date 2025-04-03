@@ -235,8 +235,22 @@ h1 {
 }
 
 .dashboard-icon {
-    font-size: 36px;
-    margin-bottom: 15px;
+    font-size: 24px;
+    margin-bottom: 6px;
+}
+
+.dashboard-card .card-title {
+    font-size: 15px;
+}
+
+.dashboard-card .card-text {
+    margin-bottom: 5px;
+    font-size: 12px;
+}
+
+.dashboard-card .btn {
+    padding: 3px 8px;
+    font-size: 13px;
 }
 
 /* Button Styles */
