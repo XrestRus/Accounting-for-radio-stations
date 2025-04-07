@@ -17,7 +17,7 @@
 <div class="row g-3 mb-3">
     <div class="col-md-3">
         <div class="card stat-card stat-card-primary" style="border-top: 3px solid var(--bs-primary);">
-            <div class="card-body">
+            <div class="card-body card-body--dashboard">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="card-subtitle mb-1 text-muted">Всего устройств</h6>
@@ -38,7 +38,7 @@
     </div>
     <div class="col-md-3">
         <div class="card stat-card stat-card-success">
-            <div class="card-body">
+            <div class="card-body card-body--dashboard">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="card-subtitle mb-1 text-muted">Доступно</h6>
@@ -59,7 +59,7 @@
     </div>
     <div class="col-md-3">
         <div class="card stat-card stat-card-warning">
-            <div class="card-body">
+            <div class="card-body card-body--dashboard">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="card-subtitle mb-1 text-muted">Выдано</h6>
@@ -80,7 +80,7 @@
     </div>
     <div class="col-md-3">
         <div class="card stat-card stat-card-danger">
-            <div class="card-body">
+            <div class="card-body card-body--dashboard">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="card-subtitle mb-1 text-muted">Просрочено</h6>
@@ -109,7 +109,7 @@
                 <h5 class="mb-0">Недавняя активность</h5>
                 <a href="{{ path('app_journal') }}" class="btn btn-sm btn-outline-primary">Все записи</a>
             </div>
-            <div class="card-body p-0">
+            <div class="card-body card-body--dashboard p-0">
                 {% if recent_transactions is empty %}
                 <div class="p-3 text-center text-muted">
                     Нет недавних операций
@@ -145,7 +145,7 @@
                 <h5 class="mb-0">Просроченные устройства</h5>
                 <span class="badge bg-light text-danger">{{ overdue_devices }} {% if overdue_devices == 1 %}устройство{% elseif overdue_devices > 1 and overdue_devices < 5 %}устройства{% else %}устройств{% endif %}</span>
             </div>
-            <div class="card-body p-0">
+            <div class="card-body card-body--dashboard p-0">
                 {% if overdue_transactions is empty %}
                 <div class="p-3 text-center text-muted">
                     Нет просроченных устройств

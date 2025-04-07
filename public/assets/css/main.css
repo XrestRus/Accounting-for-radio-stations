@@ -182,6 +182,10 @@ h1 {
 }
 
 .card-body {
+    padding: 15px 10px 15px 10px;
+}
+
+.card-body--dashboard {
     padding: 15px 10px 0 10px;
 }
 
