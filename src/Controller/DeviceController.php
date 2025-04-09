@@ -265,7 +265,97 @@ class DeviceController extends AbstractController
             'controller_name' => 'DeviceController',
         ]);
     }
+
+    /**
+     * Переводит устройство в ремонт
+     */
+    #[Route('/devices/send-to-repair/{id}', name: 'app_device_send_to_repair', methods: ['POST'])]
+    public function sendToRepair(Request $request, int $id): Response
+    {
+        $device = $this->deviceRepository->find($id);
+        if (!$device) {
+            $this->addFlash('error', 'Устройство не найдено.');
+            return $this->redirectToRoute('app_device');
+        }
+        
+        // Проверяем, что устройство может быть отправлено в ремонт
+        if (!in_array($device->getStatus(), [StatusEnum::AVAILABLE, StatusEnum::FAULTY])) {
+            $this->addFlash('error', 'Устройство не может быть отправлено в ремонт, так как имеет статус: ' . 
+                           $device->formatStatus());
+            return $this->redirectToRoute('app_device');
+        }
+        
+        if ($this->isCsrfTokenValid('repair' . $device->getId(), $request->request->get('_token'))) {
+            // Получаем комментарий о причине ремонта
+            $repairComment = $request->request->get('repairComment');
+            if ($repairComment) {
+                $device->setRepairComment($repairComment);
+            }
+            
+            // Изменяем статус на "В ремонте"
+            $device->setStatus(StatusEnum::IN_REPAIR);
+            
+            // Сохраняем изменения
+            $this->entityManager->flush();
+            
+            // Логируем операцию
+            $this->logService->logDeviceSendToRepair($device, $repairComment);
+            
+            $this->addFlash('success', 'Устройство успешно отправлено в ремонт.');
+        }
+        
+        return $this->redirectToRoute('app_device');
+    }
     
+    /**
+     * Возвращает устройство из ремонта
+     */
+    #[Route('/devices/return-from-repair/{id}', name: 'app_device_return_from_repair', methods: ['POST'])]
+    public function returnFromRepair(Request $request, int $id): Response
+    {
+        $device = $this->deviceRepository->find($id);
+        if (!$device) {
+            $this->addFlash('error', 'Устройство не найдено.');
+            return $this->redirectToRoute('app_device');
+        }
+        
+        // Проверяем, что устройство находится в ремонте
+        if ($device->getStatus() != StatusEnum::IN_REPAIR) {
+            $this->addFlash('error', 'Устройство не может быть возвращено из ремонта, так как имеет статус: ' . 
+                           $device->formatStatus());
+            return $this->redirectToRoute('app_device');
+        }
+        
+        if ($this->isCsrfTokenValid('return-repair' . $device->getId(), $request->request->get('_token'))) {
+            // Получаем результат ремонта и новый статус
+            $repairResult = $request->request->get('repairResult');
+            $newStatus = $request->request->get('repairStatus');
+            
+            // Обновляем комментарий о ремонте
+            $oldComment = $device->getRepairComment() ? $device->getRepairComment() . "\n" : "";
+            $device->setRepairComment($oldComment . "Результат ремонта: " . $repairResult);
+            
+            // Устанавливаем новый статус (исправно или неисправно)
+            if ($newStatus === 'available') {
+                $device->setStatus(StatusEnum::AVAILABLE);
+                $statusText = 'доступно';
+            } else {
+                $device->setStatus(StatusEnum::FAULTY);
+                $statusText = 'неисправно';
+            }
+            
+            // Сохраняем изменения
+            $this->entityManager->flush();
+            
+            // Логируем операцию
+            $this->logService->logDeviceReturnFromRepair($device, $repairResult, $statusText);
+            
+            $this->addFlash('success', 'Устройство успешно возвращено из ремонта.');
+        }
+        
+        return $this->redirectToRoute('app_device');
+    }
+
     /**
      * Format device type for display
      */
