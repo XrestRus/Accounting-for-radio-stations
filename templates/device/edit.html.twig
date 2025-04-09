@@ -73,6 +73,20 @@
                                    'Списано' }}
                             </span>
                             <div class="form-text">Статус устройства нельзя изменить напрямую. Он меняется автоматически при операциях выдачи/возврата устройства.</div>
+                            
+                            {% if device.id and (device.status.value == 'available' or device.status.value == 'faulty') %}
+                                <div class="mt-2">
+                                    <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#repairModal">
+                                        <i class="bi bi-tools me-1"></i> Отправить в ремонт
+                                    </button>
+                                </div>
+                            {% elseif device.id and device.status.value == 'in_repair' %}
+                                <div class="mt-2">
+                                    <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#returnFromRepairModal">
+                                        <i class="bi bi-arrow-return-left me-1"></i> Вернуть из ремонта
+                                    </button>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                     <div class="mb-3">
@@ -111,6 +125,67 @@
         {{ form_end(form) }}
     </div>
 </div>
+
+{% if device.id %}
+{# Модальное окно для отправки устройства в ремонт #}
+<div class="modal fade" id="repairModal" tabindex="-1" aria-labelledby="repairModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="repairModalLabel">Отправка устройства в ремонт</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{{ path('app_device_send_to_repair', {'id': device.id}) }}">
+                <div class="modal-body">
+                    <p>Вы собираетесь отправить устройство "{{ device.name }}" в ремонт.</p>
+                    <div class="mb-3">
+                        <label for="repairComment" class="form-label">Причина ремонта</label>
+                        <textarea class="form-control" id="repairComment" name="repairComment" rows="3" placeholder="Опишите причину отправки устройства в ремонт" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Отправить в ремонт</button>
+                </div>
+                <input type="hidden" name="_token" id="csrf_token_repair" value="{{ csrf_token('repair' ~ device.id) }}">
+            </form>
+        </div>
+    </div>
+</div>
+
+{# Модальное окно для возврата устройства из ремонта #}
+<div class="modal fade" id="returnFromRepairModal" tabindex="-1" aria-labelledby="returnFromRepairModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="returnFromRepairModalLabel">Возврат устройства из ремонта</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{{ path('app_device_return_from_repair', {'id': device.id}) }}">
+                <div class="modal-body">
+                    <p>Вы собираетесь вернуть устройство "{{ device.name }}" из ремонта.</p>
+                    <div class="mb-3">
+                        <label for="repairResult" class="form-label">Результат ремонта</label>
+                        <textarea class="form-control" id="repairResult" name="repairResult" rows="3" placeholder="Опишите результат ремонта устройства" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="repairStatus" class="form-label">Новый статус устройства</label>
+                        <select class="form-select" id="repairStatus" name="repairStatus" required>
+                            <option value="available">Исправно (доступно для выдачи)</option>
+                            <option value="faulty">Неисправно (требуется дополнительный ремонт)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Вернуть из ремонта</button>
+                </div>
+                <input type="hidden" name="_token" id="csrf_token_return_repair" value="{{ csrf_token('return-repair' ~ device.id) }}">
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block javascripts %}

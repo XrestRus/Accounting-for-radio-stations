@@ -130,7 +130,11 @@ class LogService
                 $device->getSerialNumber(),
                 $employeeName,
                 $dueDate->format('d.m.Y')
-            )
+            ),
+            [
+                'employee' => $employeeName,
+                'dueDate' => $dueDate->format('Y-m-d H:i:s')
+            ]
         );
     }
     
@@ -152,7 +156,12 @@ class LogService
                 $device->getSerialNumber(),
                 $employeeName,
                 $returnStatus
-            )
+            ),
+            [
+                'employee' => $employeeName,
+                'returnStatus' => $returnStatus,
+                'returnDate' => (new \DateTime())->format('Y-m-d H:i:s')
+            ]
         );
     }
     
@@ -175,5 +184,48 @@ class LogService
         }
         
         return $this->log('Списание устройства', $device, $details);
+    }
+    
+    /**
+     * Логирует операцию отправки устройства в ремонт
+     * 
+     * @param Device $device Устройство, отправленное в ремонт
+     * @param string|null $comment Комментарий о причине ремонта
+     * @return Log Созданный лог
+     */
+    public function logDeviceSendToRepair(Device $device, ?string $comment = null): Log
+    {
+        $details = sprintf('Устройство "%s" (S/N: %s) отправлено в ремонт', 
+            $device->getName(), 
+            $device->getSerialNumber()
+        );
+        
+        if ($comment) {
+            $details .= sprintf('. Причина: %s', $comment);
+        }
+        
+        return $this->log('Отправка устройства в ремонт', $device, $details);
+    }
+    
+    /**
+     * Логирует операцию возврата устройства из ремонта
+     * 
+     * @param Device $device Устройство, возвращенное из ремонта
+     * @param string $result Результат ремонта
+     * @param string $newStatus Новый статус устройства
+     * @return Log Созданный лог
+     */
+    public function logDeviceReturnFromRepair(Device $device, string $result, string $newStatus): Log
+    {
+        return $this->log(
+            'Возврат устройства из ремонта',
+            $device,
+            sprintf('Устройство "%s" (S/N: %s) возвращено из ремонта. Результат: %s. Новый статус: %s', 
+                $device->getName(), 
+                $device->getSerialNumber(),
+                $result,
+                $newStatus
+            )
+        );
     }
 } 

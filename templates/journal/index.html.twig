@@ -2,6 +2,33 @@
 
 {% block title %}Учет радиостанций - Журнал операций{% endblock %}
 
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .logs-container {
+        border-top: 1px solid #dee2e6;
+        margin-top: -1px;
+    }
+    
+    .toggle-logs {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .logs-table-body tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .transaction-row:hover {
+        background-color: rgba(0, 0, 0, 0.03);
+    }
+</style>
+{% endblock %}
+
 {% block body %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>Журнал операций</h1>
@@ -71,6 +98,7 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
+                            <th scope="col"></th>
                             <th scope="col">ID</th>
                             <th scope="col">Дата и время</th>
                             <th scope="col">Тип операции</th>
@@ -84,7 +112,12 @@
                     </thead>
                     <tbody>
                         {% for transaction in transactions %}
-                            <tr>
+                            <tr data-transaction-id="{{ transaction.id }}" class="transaction-row">
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary toggle-logs" data-id="{{ transaction.id }}">
+                                        <i class="bi bi-chevron-down"></i>
+                                    </button>
+                                </td>
                                 <th scope="row">{{ transaction.id }}</th>
                                 <td>{{ transaction.date }}</td>
                                 <td><span class="badge {{ transaction.typeClass }}">{{ transaction.type }}</span></td>
@@ -98,6 +131,45 @@
                                             onclick="showTransactionDetails({{ transaction.id }})">
                                         <i class="bi bi-eye"></i>
                                     </button>
+                                </td>
+                            </tr>
+                            <tr class="logs-row d-none" id="logs-row-{{ transaction.id }}">
+                                <td colspan="10" class="p-0">
+                                    <div class="logs-container bg-light p-3">
+                                        <h6>Логи устройства за период использования</h6>
+                                        <div class="logs-loading text-center">
+                                            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                                <span class="visually-hidden">Загрузка...</span>
+                                            </div>
+                                            <span class="ms-2">Загрузка логов...</span>
+                                        </div>
+                                        <div class="logs-content d-none">
+                                            <div class="table-responsive">
+                                                <table class="table table-sm">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Дата и время</th>
+                                                            <th>Действие</th>
+                                                            <th>Пользователь</th>
+                                                            <th>Детали</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="logs-table-body">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="logs-empty d-none">
+                                            <div class="alert alert-info">
+                                                Нет связанных логов для данного устройства
+                                            </div>
+                                        </div>
+                                        <div class="logs-error d-none">
+                                            <div class="alert alert-danger">
+                                                Ошибка при загрузке логов
+                                            </div>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -162,5 +234,85 @@
             </div>
         `;
     }
+    
+    // Функция для загрузки и отображения логов
+    function toggleLogs(transactionId) {
+        const logsRow = document.getElementById(`logs-row-${transactionId}`);
+        const toggleButton = document.querySelector(`.toggle-logs[data-id="${transactionId}"] i`);
+        
+        // Если строка уже отображается, просто скрываем ее
+        if (!logsRow.classList.contains('d-none')) {
+            logsRow.classList.add('d-none');
+            toggleButton.classList.remove('bi-chevron-up');
+            toggleButton.classList.add('bi-chevron-down');
+            return;
+        }
+        
+        // Показываем строку и меняем иконку
+        logsRow.classList.remove('d-none');
+        toggleButton.classList.remove('bi-chevron-down');
+        toggleButton.classList.add('bi-chevron-up');
+        
+        // Показываем индикатор загрузки
+        const logsLoading = logsRow.querySelector('.logs-loading');
+        const logsContent = logsRow.querySelector('.logs-content');
+        const logsEmpty = logsRow.querySelector('.logs-empty');
+        const logsError = logsRow.querySelector('.logs-error');
+        
+        logsLoading.classList.remove('d-none');
+        logsContent.classList.add('d-none');
+        logsEmpty.classList.add('d-none');
+        logsError.classList.add('d-none');
+        
+        // Загружаем логи через AJAX
+        fetch(`/journal/logs/${transactionId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Ошибка загрузки логов');
+                }
+                return response.json();
+            })
+            .then(data => {
+                logsLoading.classList.add('d-none');
+                
+                if (data.logs && data.logs.length > 0) {
+                    // Есть логи, заполняем таблицу
+                    const logsTableBody = logsRow.querySelector('.logs-table-body');
+                    logsTableBody.innerHTML = '';
+                    
+                    data.logs.forEach(log => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${log.timestamp}</td>
+                            <td>${log.action}</td>
+                            <td>${log.user}</td>
+                            <td>${log.details || '-'}</td>
+                        `;
+                        logsTableBody.appendChild(row);
+                    });
+                    
+                    logsContent.classList.remove('d-none');
+                } else {
+                    // Нет логов
+                    logsEmpty.classList.remove('d-none');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                logsLoading.classList.add('d-none');
+                logsError.classList.remove('d-none');
+            });
+    }
+    
+    // Добавляем обработчики событий для кнопок
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleButtons = document.querySelectorAll('.toggle-logs');
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const transactionId = this.getAttribute('data-id');
+                toggleLogs(transactionId);
+            });
+        });
+    });
 </script>
 {% endblock %}

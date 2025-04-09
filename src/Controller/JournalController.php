@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Transaction;
 use App\Repository\TransactionRepository;
+use App\Repository\LogRepository;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -20,10 +21,14 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 class JournalController extends AbstractController
 {
     private TransactionRepository $transactionRepository;
+    private LogRepository $logRepository;
 
-    public function __construct(TransactionRepository $transactionRepository)
-    {
+    public function __construct(
+        TransactionRepository $transactionRepository,
+        LogRepository $logRepository
+    ) {
         $this->transactionRepository = $transactionRepository;
+        $this->logRepository = $logRepository;
     }
 
     /**
@@ -270,5 +275,58 @@ class JournalController extends AbstractController
         
         // Возвращаем файл как ответ
         return $this->file($tempFile, $fileName, ResponseHeaderBag::DISPOSITION_ATTACHMENT);
+    }
+
+    /**
+     * Возвращает логи, связанные с транзакцией
+     */
+    #[Route('/journal/logs/{id}', name: 'app_journal_logs')]
+    public function getTransactionLogs(int $id): Response
+    {
+        // Проверяем, авторизован ли пользователь
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->json(['error' => 'Требуется авторизация'], 401);
+        }
+        
+        // Получаем транзакцию по ID
+        $transaction = $this->transactionRepository->find($id);
+        if (!$transaction) {
+            return $this->json(['error' => 'Транзакция не найдена'], 404);
+        }
+        
+        // Получаем логи, связанные с устройством из транзакции
+        $logs = $this->logRepository->findByDevice($transaction->getDevice()->getId());
+        
+        // Определяем временной диапазон для фильтрации логов
+        $startDate = $transaction->getIssuedAt();
+        $endDate = $transaction->getReturnedAt() ?: new \DateTime(); // Если устройство не возвращено, берем текущее время
+        
+        // Форматируем логи для отображения, фильтруя по типу действия и времени
+        $formattedLogs = [];
+        foreach ($logs as $log) {
+            // Пропускаем логи с действием "Редактирование устройства"
+            if (strpos($log->getAction(), 'Редактирование устройства') !== false) {
+                continue;
+            }
+            
+            // Проверяем, попадает ли время лога в диапазон между выдачей и возвратом
+            $logTimestamp = $log->getTimestamp();
+            if ($logTimestamp >= $startDate && $logTimestamp <= $endDate) {
+                $formattedLogs[] = [
+                    'id' => $log->getId(),
+                    'timestamp' => $log->getTimestamp()->format('d.m.Y H:i:s'),
+                    'action' => $log->getAction(),
+                    'user' => $log->getUser()->getUsername(),
+                    'details' => $log->getDetails(),
+                ];
+            }
+        }
+        
+        return $this->json([
+            'transactionId' => $id,
+            'deviceName' => $transaction->getDevice()->getName(),
+            'logs' => $formattedLogs
+        ]);
     }
 }
